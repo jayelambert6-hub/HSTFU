@@ -605,6 +605,8 @@ function renderTopics() {
   const subject = document.getElementById('subject').value;
   const color = SUBJECT_COLORS[subject] || '#3B82C4';
   document.documentElement.style.setProperty('--subject-color', color);
+  const frame = document.getElementById('videoFrame');
+  if (frame) frame.style.backgroundColor = color;
   selectedTopic = '';
   document.getElementById('customTopic').value = '';
   const grid = document.getElementById('topicGrid');
@@ -636,6 +638,7 @@ async function generateLesson() {
 
   const color = SUBJECT_COLORS[subject] || '#3B82C4';
   document.documentElement.style.setProperty('--subject-color', color);
+  document.getElementById('videoFrame').style.backgroundColor = color;
   document.getElementById('ageTag').textContent = ageGroup.toUpperCase();
   document.getElementById('subjectTag').textContent = subject.toUpperCase();
 
@@ -686,7 +689,7 @@ Rules:
       },
       body: JSON.stringify({
         model: aiModel,
-        max_tokens: 1000,
+        max_tokens: 3000,
         messages: [{ role: "user", content: prompt }]
       })
     });
