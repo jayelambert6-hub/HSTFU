@@ -277,44 +277,50 @@ cursor: pointer; transition: all 0.2s; white-space: nowrap;
 
 /* COUNTING DISPLAY */
 .count-display {
-display: flex;
-flex-wrap: wrap;
-justify-content: center;
-align-items: center;
-gap: 16px;
-margin-top: 20px;
-min-height: 100px;
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+gap: 10px;
+margin-top: 14px;
+width: 100%;
+max-width: 580px;
+margin-left: auto;
+margin-right: auto;
 }
 .count-item {
 display: flex;
 flex-direction: column;
 align-items: center;
-gap: 6px;
+gap: 3px;
 opacity: 0;
 transform: scale(0.3) rotate(-10deg);
-transition: opacity 0.35s cubic-bezier(0.34,1.56,0.64,1), transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+transition: opacity 0.3s cubic-bezier(0.34,1.56,0.64,1), transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+background: rgba(255,255,255,0.12);
+border-radius: 10px;
+padding: 8px 4px;
 }
 .count-item.pop {
 opacity: 1;
 transform: scale(1) rotate(0deg);
 }
 .count-number {
-font-size: clamp(36px, 6vw, 72px);
+font-size: clamp(22px, 4vw, 44px);
 font-weight: 700;
 color: #fff;
 line-height: 1;
-text-shadow: 0 4px 16px rgba(0,0,0,0.2);
+text-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 .count-emoji {
-font-size: clamp(28px, 5vw, 52px);
+font-size: clamp(20px, 3.5vw, 36px);
 line-height: 1;
 }
 .count-word {
-font-size: clamp(13px, 2vw, 18px);
+font-size: clamp(9px, 1.5vw, 13px);
 font-weight: 700;
 color: rgba(255,255,255,0.85);
-letter-spacing: 0.04em;
+letter-spacing: 0.03em;
 text-transform: uppercase;
+text-align: center;
+line-height: 1.2;
 }
 
 /* CONFETTI */
@@ -1177,11 +1183,20 @@ function downloadThumbnail() {
   link.click();
 }
 
-// ── OPENAI TTS VIA OPENROUTER ──
+// ── OPENAI TTS — FIXED FOR SAFARI/IPAD ──
 let voiceMuted = false;
 let currentAudio = null;
 let audioQueue = [];
 let isProcessingAudio = false;
+let sharedAudioEl = null; // single reused Audio element — fixes Safari blocking
+
+function getAudioEl() {
+  if (!sharedAudioEl) {
+    sharedAudioEl = new Audio();
+    sharedAudioEl.preload = 'auto';
+  }
+  return sharedAudioEl;
+}
 
 function updateSpeedLabel(val) {
   document.getElementById('voiceSpeedVal').textContent = parseFloat(val).toFixed(2) + '×';
@@ -1196,13 +1211,14 @@ function toggleMute() {
 }
 
 function stopAudio() {
-  if (currentAudio) {
-    currentAudio.pause();
-    currentAudio.src = '';
-    currentAudio = null;
+  if (sharedAudioEl) {
+    sharedAudioEl.pause();
+    sharedAudioEl.src = '';
   }
+  currentAudio = null;
   audioQueue = [];
   isProcessingAudio = false;
+  setVoiceStatus('');
 }
 
 function setVoiceStatus(msg, color) {
@@ -1211,7 +1227,7 @@ function setVoiceStatus(msg, color) {
 }
 
 async function fetchTTS(text) {
-  if (!elevenLabsKey) throw new Error('No OpenAI key. Add it in Settings → Change API Keys.');
+  if (!elevenLabsKey) throw new Error('No OpenAI key — add it via Change API Keys.');
   const voice = document.getElementById('voiceSelect').value;
   const speed = parseFloat(document.getElementById('voiceSpeed').value);
   const res = await fetch('https://api.openai.com/v1/audio/speech', {
@@ -1236,11 +1252,7 @@ async function fetchTTS(text) {
   return URL.createObjectURL(blob);
 }
 
-async function speakSlide(slide) {
-  if (voiceMuted || !elevenLabsKey) return;
-  stopAudio();
-
-  // Build narration text
+function buildNarration(slide) {
   let text = slide.heading + '. ';
   if (slide.body) {
     const tmp = document.createElement('div');
@@ -1251,20 +1263,38 @@ async function speakSlide(slide) {
   if (slide.bullets && slide.bullets.length) {
     text += slide.bullets.join('. ') + '.';
   }
+  return text;
+}
 
-  setVoiceStatus('🎙️ Speaking…', '#3d6b4f');
+async function speakSlide(slide) {
+  if (voiceMuted || !elevenLabsKey) return;
+  stopAudio();
+  setVoiceStatus('🎙️ Loading…', '#3d6b4f');
   try {
+    const text = buildNarration(slide);
     const url = await fetchTTS(text);
     if (voiceMuted) { URL.revokeObjectURL(url); setVoiceStatus(''); return; }
-    const audio = new Audio(url);
-    currentAudio = audio;
-    audio.onended = () => { URL.revokeObjectURL(url); currentAudio = null; setVoiceStatus(''); };
-    audio.onerror = () => { URL.revokeObjectURL(url); currentAudio = null; setVoiceStatus(''); };
-    await audio.play();
+
+    const audio = getAudioEl();
+    audio.src = url;
+    audio.onended = () => { URL.revokeObjectURL(url); setVoiceStatus(''); };
+    audio.onerror = () => { URL.revokeObjectURL(url); setVoiceStatus(''); };
+
+    // Play — Safari requires this to be called from within an async chain
+    // triggered by an existing user gesture (Preview button sets this up)
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => setVoiceStatus('🎙️ Speaking…', '#3d6b4f'))
+        .catch(e => {
+          setVoiceStatus('⚠️ Tap Preview once to unlock audio', '#c0392b');
+          setTimeout(() => setVoiceStatus(''), 5000);
+        });
+    }
   } catch(e) {
     console.warn('TTS error:', e.message);
-    setVoiceStatus('⚠️ Voice error: ' + e.message, '#c0392b');
-    setTimeout(() => setVoiceStatus(''), 4000);
+    setVoiceStatus('⚠️ ' + e.message, '#c0392b');
+    setTimeout(() => setVoiceStatus(''), 5000);
   }
 }
 
@@ -1274,12 +1304,16 @@ async function previewVoice() {
   setVoiceStatus('🎙️ Loading preview…', '#3d6b4f');
   const voiceName = document.getElementById('voiceSelect').selectedOptions[0]?.text?.split('—')[0]?.trim() || 'this voice';
   try {
-    const url = await fetchTTS(`Hi! I'm ${voiceName}. I'll be reading your homeschool lessons today. Let's start learning!`);
-    const audio = new Audio(url);
-    currentAudio = audio;
-    audio.onended = () => { URL.revokeObjectURL(url); currentAudio = null; setVoiceStatus('✅ Sounds good — hit Play to start!', '#3d6b4f'); setTimeout(() => setVoiceStatus(''), 3000); };
-    audio.onerror = () => { URL.revokeObjectURL(url); currentAudio = null; setVoiceStatus(''); };
-    await audio.play();
+    const url = await fetchTTS(`Hi! I'm ${voiceName}. Ready to teach your lesson!`);
+    const audio = getAudioEl();
+    audio.src = url;
+    audio.onended = () => {
+      URL.revokeObjectURL(url);
+      setVoiceStatus('✅ Audio unlocked — hit Play!', '#3d6b4f');
+      setTimeout(() => setVoiceStatus(''), 4000);
+    };
+    audio.onerror = () => { URL.revokeObjectURL(url); setVoiceStatus(''); };
+    await audio.play(); // This user-gesture-triggered play unlocks Safari
   } catch(e) {
     setVoiceStatus('⚠️ ' + e.message, '#c0392b');
     setTimeout(() => setVoiceStatus(''), 5000);
@@ -1297,7 +1331,6 @@ function togglePlay() {
   if (isPlaying) {
     isPlaying = false; clearInterval(timer); stopAudio();
     document.getElementById('playBtn').textContent = '▶ Play';
-    setVoiceStatus('');
   } else {
     isPlaying = true;
     document.getElementById('playBtn').textContent = '⏸ Pause';
@@ -1318,7 +1351,7 @@ function startTimer() {
         clearInterval(timer); isPlaying = false;
         document.getElementById('playBtn').textContent = '▶ Play';
         showEndSlide();
-        speakSlide({ heading: 'Lesson complete!', body: 'Great job! You finished the lesson.', bullets: [] });
+        speakSlide({ heading: 'You did it! Lesson complete. Great job!', body: '', bullets: [] });
       }
     }
   }, 1000);
