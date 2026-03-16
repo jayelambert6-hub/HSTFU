@@ -4,433 +4,243 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Homeschool Tools 4 U — Lesson Player</title>
+<title>Homeschool Tools 4 U</title>
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-:root {
-–sunlight:    #F5A623;
-–forest:      #4A7C59;
-–sky:         #3B82C4;
-–berry:       #C0392B;
-–soil:        #7D5A3C;
-–violet:      #6B3FA0;
-–amber:       #D35400;
-–teal:        #1A6B8A;
-–bark:        #2C1A0E;
-–cream:       #FDF8F0;
-–subject-color: #3B82C4;
+/* BRAND COLORS */
+:root{
+–sun:#F5A623;–forest:#4A7C59;–sky:#3B82C4;–berry:#C0392B;
+–soil:#7D5A3C;–violet:#6B3FA0;–amber:#D35400;–teal:#1A6B8A;
+–bark:#2C1A0E;–cream:#FDF8F0;–sub:#3B82C4;
 }
 
-body {
-font-family: Helvetica, Arial, sans-serif;
-background: var(–cream);
-color: var(–bark);
-min-height: 100vh;
-display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: flex-start;
-padding: 28px 20px 48px;
-}
+body{font-family:Helvetica,Arial,sans-serif;background:var(–cream);color:var(–bark);
+min-height:100vh;display:flex;flex-direction:column;align-items:center;
+justify-content:flex-start;padding:24px 16px 60px;}
 
-.brand-header {
-display: flex; align-items: center; gap: 12px;
-margin-bottom: 28px; align-self: flex-start;
-width: 100%; max-width: 700px;
-}
-.brand-logo {
-width: 42px; height: 42px; background: var(–sunlight);
-border-radius: 8px; display: grid; place-items: center;
-font-size: 20px; font-weight: 900; color: var(–bark);
-}
-.brand-name strong { display: block; font-size: 15px; font-weight: 700; }
-.brand-name span { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(–sunlight); }
+/* BRAND HEADER */
+.brand-header{display:flex;align-items:center;gap:10px;margin-bottom:24px;
+align-self:flex-start;width:100%;max-width:700px;}
+.brand-logo{width:40px;height:40px;background:var(–sun);border-radius:8px;
+display:grid;place-items:center;font-size:18px;font-weight:900;color:var(–bark);}
+.brand-name strong{display:block;font-size:14px;font-weight:700;}
+.brand-name span{font-size:10px;font-weight:700;letter-spacing:.1em;
+text-transform:uppercase;color:var(–sun);}
 
-#apiScreen { width: 100%; max-width: 700px; display: block; }
-#setup     { width: 100%; max-width: 700px; display: none; }
-#player    { width: 100%; max-width: 700px; display: none; }
-#loading   { display: none; flex-direction: column; align-items: center; gap: 18px; text-align: center; }
-.api-card {
-background: #fff; border: 2px solid #e5ddd4;
-border-radius: 12px; padding: 32px;
-}
-.api-card h2 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
-.api-card p { font-size: 14px; color: #6b5c4e; line-height: 1.6; margin-bottom: 20px; }
-.api-card a { color: var(–sky); }
-.api-note {
-background: #fffbf0; border: 1.5px solid #f5e4b0;
-border-radius: 8px; padding: 12px 16px;
-font-size: 13px; color: #7a6030; margin-bottom: 20px; line-height: 1.55;
-}
+/* SCREENS — simple, no animation */
+.screen{width:100%;max-width:700px;}
+#s-api{display:block;}
+#s-setup{display:none;}
+#s-loading{display:none;flex-direction:column;align-items:center;gap:16px;text-align:center;}
+#s-player{display:none;}
 
-/* SETUP */
-h1 { font-size: clamp(24px, 4vw, 32px); font-weight: 700; letter-spacing: -0.02em; margin-bottom: 6px; }
-.subtitle { color: #6b5c4e; font-size: 14px; margin-bottom: 24px; line-height: 1.6; }
+/* CARDS */
+.card{background:#fff;border:2px solid #e5ddd4;border-radius:12px;padding:28px;}
+.card h2{font-size:20px;font-weight:700;margin-bottom:8px;}
+.card p{font-size:14px;color:#6b5c4e;line-height:1.6;margin-bottom:18px;}
+.section-box{border:2px solid #e5ddd4;border-radius:10px;padding:16px;margin-bottom:14px;}
+.section-box-title{font-size:13px;font-weight:700;margin-bottom:10px;
+display:flex;align-items:center;gap:8px;}
+.section-box-sub{font-size:11px;color:#9a8878;font-weight:400;}
 
-label {
-display: block; font-size: 10px; font-weight: 700;
-letter-spacing: 0.1em; text-transform: uppercase; color: #6b5c4e; margin-bottom: 7px;
-}
-input, select {
-width: 100%; padding: 12px 14px; border: 2px solid #e5ddd4; border-radius: 8px;
-font-family: Helvetica, Arial, sans-serif; font-size: 14px;
-background: #fff; color: var(–bark); outline: none; transition: border-color 0.2s;
-}
-input:focus, select:focus { border-color: var(–sunlight); }
-.field { margin-bottom: 16px; }
-.row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+/* FORM */
+.field{margin-bottom:14px;}
+.field:last-child{margin-bottom:0;}
+label,lbl{display:block;font-size:10px;font-weight:700;letter-spacing:.09em;
+text-transform:uppercase;color:#6b5c4e;margin-bottom:6px;}
+input,select,textarea{width:100%;padding:11px 13px;border:2px solid #e5ddd4;
+border-radius:8px;font-family:Helvetica,Arial,sans-serif;font-size:14px;
+background:#fff;color:var(–bark);outline:none;transition:border-color .2s;}
+input:focus,select:focus,textarea:focus{border-color:var(–sun);}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 
-.topic-grid {
-display: grid; grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
-gap: 7px; margin-top: 8px; max-height: 255px; overflow-y: auto; padding: 3px 2px;
-}
-.topic-btn {
-padding: 9px 12px; border: 2px solid #e5ddd4; border-radius: 8px;
-background: #fff; font-family: Helvetica, Arial, sans-serif;
-font-size: 12px; font-weight: 600; color: var(–bark);
-cursor: pointer; text-align: left; transition: all 0.15s; line-height: 1.4;
-}
-.topic-btn:hover { border-color: var(–subject-color); color: var(–subject-color); }
-.topic-btn.selected { border-color: var(–subject-color); background: var(–subject-color); color: #fff; }
+/* BUTTONS */
+.btn-primary{width:100%;padding:14px;background:var(–sun);color:var(–bark);
+border:none;border-radius:8px;font-family:Helvetica,Arial,sans-serif;
+font-size:14px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+cursor:pointer;margin-top:4px;}
+.btn-primary:hover{background:#e09610;}
+.btn-dark{padding:11px 24px;background:var(–bark);color:#fff;border:none;
+border-radius:8px;font-family:Helvetica,Arial,sans-serif;font-size:12px;
+font-weight:700;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;}
+.btn-dark:hover{background:#4a3020;}
+.btn-outline{padding:10px 16px;background:#fff;color:var(–bark);
+border:2px solid #e5ddd4;border-radius:8px;font-family:Helvetica,Arial,sans-serif;
+font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;}
+.btn-outline:hover{border-color:var(–bark);}
+.btn-sm{padding:7px 13px;background:#fff;color:var(–bark);
+border:1.5px solid #e5ddd4;border-radius:7px;font-family:Helvetica,Arial,sans-serif;
+font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;}
+.btn-sm:hover{border-color:var(–bark);}
+.btn-sun{background:var(–sun);border-color:var(–sun);color:var(–bark);}
+.btn-sun:hover{background:#e09610;border-color:#e09610;}
+.link-btn{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+color:#9a8878;background:none;border:none;cursor:pointer;
+font-family:Helvetica,Arial,sans-serif;text-decoration:underline;}
+.link-btn:hover{color:var(–bark);}
 
-.generate-btn {
-width: 100%; padding: 15px; background: var(–sunlight); color: var(–bark);
-border: none; border-radius: 8px; font-family: Helvetica, Arial, sans-serif;
-font-size: 14px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
-cursor: pointer; margin-top: 6px; transition: background 0.2s, transform 0.1s;
-display: flex; align-items: center; justify-content: center; gap: 8px;
-}
-.generate-btn:hover { background: #e09610; }
-.generate-btn:active { transform: scale(0.99); }
-.generate-btn:disabled { background: #ccc; cursor: not-allowed; color: #888; }
+/* TOPIC GRID */
+.topic-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
+gap:7px;margin-top:6px;max-height:240px;overflow-y:auto;padding:2px;}
+.topic-btn{padding:9px 11px;border:2px solid #e5ddd4;border-radius:8px;background:#fff;
+font-family:Helvetica,Arial,sans-serif;font-size:12px;font-weight:600;
+color:var(–bark);cursor:pointer;text-align:left;transition:all .15s;line-height:1.4;}
+.topic-btn:hover{border-color:var(–sub);color:var(–sub);}
+.topic-btn.sel{border-color:var(–sub);background:var(–sub);color:#fff;}
 
-/* LOADING */
-.spinner {
-width: 44px; height: 44px; border: 3px solid #e5ddd4;
-border-top-color: var(–sunlight); border-radius: 50%; animation: spin 0.75s linear infinite;
-}
-.loading-text { color: #6b5c4e; font-size: 14px; font-weight: 700; letter-spacing: 0.03em; }
+/* SPINNER */
+.spinner{width:42px;height:42px;border:3px solid #e5ddd4;
+border-top-color:var(–sun);border-radius:50%;animation:spin .75s linear infinite;}
+.loading-text{color:#6b5c4e;font-size:14px;font-weight:700;}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-/* PLAYER */
+/* VIDEO WRAPPER 16:9 */
+.video-wrapper{width:100%;position:relative;padding-bottom:56.25%;height:0;
+border-radius:12px;overflow:hidden;}
+.video-frame{position:absolute;top:0;left:0;width:100%;height:100%;
+background:var(–sub);display:flex;flex-direction:column;overflow:hidden;}
+.video-frame::before{content:’’;position:absolute;inset:0;pointer-events:none;
+background:radial-gradient(ellipse at 15% 15%,rgba(255,255,255,.1) 0%,transparent 55%),
+radial-gradient(ellipse at 85% 85%,rgba(0,0,0,.12) 0%,transparent 55%);}
 
-/* ── 16:9 YOUTUBE ASPECT RATIO ── */
-.video-wrapper {
-width: 100%;
-position: relative;
-padding-bottom: 56.25%; /* 16:9 */
-height: 0;
-border-radius: 12px;
-overflow: hidden;
-}
-.video-frame {
-position: absolute;
-top: 0; left: 0; width: 100%; height: 100%;
-background: var(–subject-color);
-display: flex; flex-direction: column;
-transition: background 0.4s ease;
-border-radius: 12px;
-overflow: hidden;
-}
-.video-frame::before {
-content: ‘’; position: absolute; inset: 0;
-background: radial-gradient(ellipse at 15% 15%, rgba(255,255,255,0.1) 0%, transparent 55%),
-radial-gradient(ellipse at 85% 85%, rgba(0,0,0,0.12) 0%, transparent 55%);
-pointer-events: none;
-}
-.video-topbar {
-display: flex; align-items: center; justify-content: space-between;
-padding: 18px 22px 0; position: relative; z-index: 2;
-}
-.video-channel { display: flex; align-items: center; gap: 8px; }
-.video-channel-logo {
-width: 30px; height: 30px; background: var(–sunlight); border-radius: 6px;
-display: grid; place-items: center; font-size: 13px; font-weight: 900; color: var(–bark);
-}
-.video-channel-name { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.9); letter-spacing: 0.04em; }
-.video-tags { display: flex; gap: 8px; }
-.tag {
-padding: 4px 10px; background: rgba(255,255,255,0.2); border-radius: 4px;
-font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.95);
-}
-.video-content {
-flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-padding: 28px 44px; text-align: center; position: relative; z-index: 2;
-}
-.slide-inner {
-opacity: 0; transform: translateY(18px); transition: opacity 0.45s ease, transform 0.45s ease; width: 100%;
-}
-.slide-inner.visible { opacity: 1; transform: translateY(0); }
-.slide-topic-label {
-display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
-color: rgba(255,255,255,0.7); margin-bottom: 14px; padding: 4px 12px;
-border: 1.5px solid rgba(255,255,255,0.3); border-radius: 20px;
-}
-.slide-heading {
-font-size: clamp(24px, 3.5vw, 34px); font-weight: 700; color: #fff;
-line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 16px;
-text-shadow: 0 2px 12px rgba(0,0,0,0.15);
-}
-.slide-body { font-size: 15px; color: rgba(255,255,255,0.9); line-height: 1.7; max-width: 580px; margin: 0 auto; }
-.slide-bullets {
-list-style: none; margin-top: 18px; display: flex; flex-direction: column; gap: 9px;
-text-align: left; max-width: 520px; margin-left: auto; margin-right: auto;
-}
-.slide-bullets li {
-display: flex; align-items: flex-start; gap: 11px;
-font-size: 14px; color: rgba(255,255,255,0.92); line-height: 1.5;
-opacity: 0; transform: translateX(-12px); transition: opacity 0.35s ease, transform 0.35s ease;
-background: rgba(0,0,0,0.12); padding: 9px 13px; border-radius: 7px;
-}
-.slide-bullets li.show { opacity: 1; transform: translateX(0); }
-.bullet-num {
-min-width: 20px; height: 20px; background: rgba(255,255,255,0.25); border-radius: 50%;
-display: grid; place-items: center; font-size: 10px; font-weight: 700; color: #fff; margin-top: 2px;
-}
-.video-progressbar {
-height: 8px; background: rgba(0,0,0,0.2); position: relative; z-index: 2;
-border-radius: 0 0 12px 12px; overflow: hidden;
-}
-.video-progressfill { height: 100%; background: var(–sunlight); transition: width 0.6s ease; width: 0%; }
+/* VIDEO TOP BAR */
+.video-topbar{display:flex;align-items:center;justify-content:space-between;
+padding:14px 18px 0;position:relative;z-index:2;}
+.video-channel{display:flex;align-items:center;gap:8px;}
+.video-channel-logo{width:28px;height:28px;background:var(–sun);border-radius:6px;
+display:grid;place-items:center;font-size:12px;font-weight:900;color:var(–bark);}
+.video-channel-name{font-size:10px;font-weight:700;color:rgba(255,255,255,.9);letter-spacing:.04em;}
+.video-tags{display:flex;gap:6px;}
+.vtag{padding:3px 9px;background:rgba(255,255,255,.2);border-radius:4px;
+font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+color:rgba(255,255,255,.95);}
 
-.controls {
-display: flex; align-items: center; justify-content: space-between; margin-top: 14px; gap: 10px;
-}
-.ctrl-btn {
-padding: 10px 18px; border-radius: 8px; border: 2px solid #e5ddd4; background: #fff;
-font-family: Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 700;
-letter-spacing: 0.05em; text-transform: uppercase; color: var(–bark); cursor: pointer; transition: all 0.2s;
-}
-.ctrl-btn:hover { border-color: var(–bark); }
-.ctrl-btn:disabled { opacity: 0.25; cursor: not-allowed; }
-.center-controls { display: flex; align-items: center; gap: 10px; }
-.play-btn {
-padding: 11px 26px; background: var(–bark); color: #fff; border: none; border-radius: 8px;
-font-family: Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 700;
-letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; transition: background 0.2s;
-}
-.play-btn:hover { background: #4a3020; }
-.timer-pill {
-padding: 8px 13px; background: #fff; border: 2px solid #e5ddd4; border-radius: 8px;
-font-size: 13px; font-weight: 700; color: var(–bark); min-width: 50px; text-align: center;
-}
-.footer-row { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
-.slide-counter { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #9a8878; }
-.new-lesson-btn {
-font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
-color: #9a8878; background: none; border: none; cursor: pointer;
-font-family: Helvetica, Arial, sans-serif; text-decoration: underline;
-}
-.new-lesson-btn:hover { color: var(–bark); }
-.end-slide {
-display: flex; flex-direction: column; align-items: center; justify-content: center;
-text-align: center; min-height: 300px; gap: 14px; padding: 40px;
-}
-.end-icon { font-size: 52px; }
-.end-slide h2 { font-size: 28px; font-weight: 700; color: #fff; letter-spacing: -0.02em; }
-.end-slide p { color: rgba(255,255,255,0.8); font-size: 14px; line-height: 1.6; max-width: 360px; }
-.end-replay {
-margin-top: 8px; padding: 12px 26px; background: var(–sunlight); color: var(–bark);
-border: none; border-radius: 8px; font-family: Helvetica, Arial, sans-serif;
-font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer;
-}
-.end-replay:hover { background: #e09610; }
+/* VIDEO CONTENT */
+.video-content{flex:1;display:flex;flex-direction:column;align-items:center;
+justify-content:center;padding:20px 36px;text-align:center;position:relative;z-index:2;}
+.slide-inner{opacity:0;transform:translateY(14px);
+transition:opacity .4s ease,transform .4s ease;width:100%;}
+.slide-inner.vis{opacity:1;transform:translateY(0);}
+.slide-tag{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.12em;
+text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:12px;
+padding:3px 11px;border:1.5px solid rgba(255,255,255,.3);border-radius:20px;}
+.slide-h{font-size:clamp(20px,3.2vw,32px);font-weight:700;color:#fff;
+line-height:1.15;letter-spacing:-.02em;margin-bottom:12px;
+text-shadow:0 2px 10px rgba(0,0,0,.15);}
+.slide-body{font-size:14px;color:rgba(255,255,255,.9);line-height:1.7;
+max-width:560px;margin:0 auto;}
+.slide-bullets{list-style:none;margin-top:14px;display:flex;flex-direction:column;
+gap:8px;text-align:left;max-width:500px;margin-left:auto;margin-right:auto;}
+.slide-bullets li{display:flex;align-items:flex-start;gap:10px;font-size:13px;
+color:rgba(255,255,255,.92);line-height:1.5;opacity:0;transform:translateX(-10px);
+transition:opacity .3s ease,transform .3s ease;
+background:rgba(0,0,0,.12);padding:8px 12px;border-radius:7px;}
+.slide-bullets li.show{opacity:1;transform:translateX(0);}
+.bnum{min-width:18px;height:18px;background:rgba(255,255,255,.25);border-radius:50%;
+display:grid;place-items:center;font-size:9px;font-weight:700;color:#fff;margin-top:2px;}
 
-/* VOICE PANEL */
-.voice-section {
-margin-top: 14px; background: #fff;
-border: 2px solid #e5ddd4; border-radius: 12px; padding: 16px 20px;
-}
-.voice-row {
-display: flex; align-items: center; gap: 10px; flex-wrap: wrap; width: 100%;
-}
-.voice-section-title {
-font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
-text-transform: uppercase; color: #6b5c4e; white-space: nowrap;
-}
-.voice-select {
-flex: 1; min-width: 180px; padding: 9px 12px;
-border: 2px solid #e5ddd4; border-radius: 8px;
-font-family: Helvetica, Arial, sans-serif; font-size: 13px;
-background: var(–cream); color: var(–bark); outline: none;
-}
-.voice-select:focus { border-color: var(–sunlight); }
-.voice-speed-label {
-font-size: 11px; font-weight: 700; color: #9a8878;
-letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap;
-}
-.voice-speed { width: 110px; accent-color: var(–sunlight); }
-.voice-action-btn {
-padding: 8px 14px; border-radius: 8px; border: 2px solid #e5ddd4;
-background: #fff; font-family: Helvetica, Arial, sans-serif;
-font-size: 12px; font-weight: 700; letter-spacing: 0.04em;
-text-transform: uppercase; color: var(–bark);
-cursor: pointer; transition: all 0.2s; white-space: nowrap;
-}
-.voice-action-btn:hover { border-color: var(–bark); }
-.preview-btn { background: var(–sunlight); border-color: var(–sunlight); color: var(–bark); }
-.preview-btn:hover { background: #e09610; border-color: #e09610; }
-.mute-btn.muted { background: var(–bark); color: #fff; border-color: var(–bark); }
+/* COUNT DISPLAY */
+.count-display{display:grid;grid-template-columns:repeat(auto-fit,minmax(75px,1fr));
+gap:8px;margin-top:12px;width:100%;max-width:540px;margin-left:auto;margin-right:auto;}
+.count-item{display:flex;flex-direction:column;align-items:center;gap:3px;
+opacity:0;transform:scale(.3) rotate(-8deg);
+transition:opacity .3s cubic-bezier(.34,1.56,.64,1),transform .3s cubic-bezier(.34,1.56,.64,1);
+background:rgba(255,255,255,.12);border-radius:9px;padding:7px 4px;}
+.count-item.pop{opacity:1;transform:scale(1) rotate(0);}
+.count-num{font-size:clamp(20px,3.5vw,40px);font-weight:700;color:#fff;line-height:1;}
+.count-emoji{font-size:clamp(18px,3vw,32px);line-height:1;}
+.count-word{font-size:clamp(8px,1.3vw,12px);font-weight:700;color:rgba(255,255,255,.85);
+letter-spacing:.03em;text-transform:uppercase;text-align:center;line-height:1.2;}
 
-/* COUNTING DISPLAY */
-.count-display {
-display: grid;
-grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-gap: 10px;
-margin-top: 14px;
-width: 100%;
-max-width: 580px;
-margin-left: auto;
-margin-right: auto;
-}
-.count-item {
-display: flex;
-flex-direction: column;
-align-items: center;
-gap: 3px;
-opacity: 0;
-transform: scale(0.3) rotate(-10deg);
-transition: opacity 0.3s cubic-bezier(0.34,1.56,0.64,1), transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
-background: rgba(255,255,255,0.12);
-border-radius: 10px;
-padding: 8px 4px;
-}
-.count-item.pop {
-opacity: 1;
-transform: scale(1) rotate(0deg);
-}
-.count-number {
-font-size: clamp(22px, 4vw, 44px);
-font-weight: 700;
-color: #fff;
-line-height: 1;
-text-shadow: 0 2px 8px rgba(0,0,0,0.2);
-}
-.count-emoji {
-font-size: clamp(20px, 3.5vw, 36px);
-line-height: 1;
-}
-.count-word {
-font-size: clamp(9px, 1.5vw, 13px);
-font-weight: 700;
-color: rgba(255,255,255,0.85);
-letter-spacing: 0.03em;
-text-transform: uppercase;
-text-align: center;
-line-height: 1.2;
-}
+/* PROGRESS BAR */
+.video-progressbar{height:7px;background:rgba(0,0,0,.2);
+position:relative;z-index:2;border-radius:0 0 12px 12px;overflow:hidden;}
+.video-progressfill{height:100%;background:var(–sun);transition:width .5s ease;width:0%;}
+
+/* CONTROLS */
+.controls{display:flex;align-items:center;justify-content:space-between;margin-top:12px;gap:8px;}
+.center-controls{display:flex;align-items:center;gap:8px;}
+.timer-pill{padding:7px 12px;background:#fff;border:2px solid #e5ddd4;border-radius:8px;
+font-size:12px;font-weight:700;color:var(–bark);min-width:46px;text-align:center;}
+.footer-row{display:flex;align-items:center;justify-content:space-between;margin-top:9px;}
+.slide-counter{font-size:10px;font-weight:700;letter-spacing:.08em;
+text-transform:uppercase;color:#9a8878;}
+.footer-btns{display:flex;gap:8px;}
+
+/* END SLIDE */
+.end-slide{display:flex;flex-direction:column;align-items:center;justify-content:center;
+text-align:center;min-height:280px;gap:12px;padding:32px;}
+.end-icon{font-size:48px;}
+.end-slide h2{font-size:26px;font-weight:700;color:#fff;letter-spacing:-.02em;}
+.end-slide p{color:rgba(255,255,255,.8);font-size:13px;line-height:1.6;max-width:340px;}
+.btn-end-replay{padding:11px 24px;background:var(–sun);color:var(–bark);border:none;
+border-radius:8px;font-family:Helvetica,Arial,sans-serif;font-size:12px;font-weight:700;
+letter-spacing:.05em;text-transform:uppercase;cursor:pointer;margin-top:6px;}
 
 /* CONFETTI */
-.confetti-piece {
-position: absolute;
-width: 10px; height: 10px;
-border-radius: 2px;
-animation: confettiFall linear forwards;
-pointer-events: none;
-}
-@keyframes confettiFall {
-0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
-100% { transform: translateY(500px) rotate(720deg); opacity: 0; }
-}
-.thumbnail-section {
-margin-top: 18px;
-background: #fff;
-border: 2px solid #e5ddd4;
-border-radius: 12px;
-padding: 18px 20px;
-}
-.thumbnail-section-title {
-font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-color: #6b5c4e; margin-bottom: 12px;
-}
-.thumbnail-preview-wrap {
-width: 100%; position: relative; padding-bottom: 52.5%; /* ~1280x672 YouTube thumb ratio */
-height: 0; border-radius: 8px; overflow: hidden; margin-bottom: 12px;
-}
-#thumbnailCanvas {
-position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-border-radius: 8px;
-}
-.download-thumb-btn {
-width: 100%; padding: 12px;
-background: var(–bark); color: #fff;
-border: none; border-radius: 8px;
-font-family: Helvetica, Arial, sans-serif;
-font-size: 12px; font-weight: 700;
-letter-spacing: 0.06em; text-transform: uppercase;
-cursor: pointer; transition: background 0.2s;
-display: flex; align-items: center; justify-content: center; gap: 8px;
-}
-.download-thumb-btn:hover { background: #4a3020; }
+.confetti-piece{position:absolute;border-radius:2px;
+animation:confettiFall linear forwards;pointer-events:none;}
+@keyframes confettiFall{
+0%{transform:translateY(-20px) rotate(0);opacity:1;}
+100%{transform:translateY(500px) rotate(720deg);opacity:0;}}
+
+/* VOICE PANEL */
+.panel{margin-top:12px;background:#fff;border:2px solid #e5ddd4;
+border-radius:12px;padding:14px 18px;}
+.panel-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.panel-label{font-size:10px;font-weight:700;letter-spacing:.09em;
+text-transform:uppercase;color:#6b5c4e;white-space:nowrap;}
+.voice-sel{flex:1;min-width:160px;padding:8px 11px;border:2px solid #e5ddd4;
+border-radius:8px;font-family:Helvetica,Arial,sans-serif;font-size:13px;
+background:var(–cream);color:var(–bark);outline:none;}
+.voice-sel:focus{border-color:var(–sun);}
+.speed-range{width:100px;accent-color:var(–sun);}
+.voice-status{font-size:11px;font-weight:700;color:#3d6b4f;margin-left:6px;}
+
+/* THUMBNAIL */
+.thumb-section{margin-top:12px;background:#fff;border:2px solid #e5ddd4;
+border-radius:12px;padding:16px 18px;}
+.thumb-title{font-size:10px;font-weight:700;letter-spacing:.09em;
+text-transform:uppercase;color:#6b5c4e;margin-bottom:10px;}
+.thumb-wrap{width:100%;position:relative;padding-bottom:52.5%;height:0;
+border-radius:8px;overflow:hidden;margin-bottom:10px;}
+#thumbCanvas{position:absolute;top:0;left:0;width:100%;height:100%;border-radius:8px;}
+.btn-download{width:100%;padding:11px;background:var(–bark);color:#fff;border:none;
+border-radius:8px;font-family:Helvetica,Arial,sans-serif;font-size:12px;font-weight:700;
+letter-spacing:.05em;text-transform:uppercase;cursor:pointer;}
+.btn-download:hover{background:#4a3020;}
 
 /* SCRIPT EDITOR */
-.script-section {
-margin-top: 14px; background: #fff;
-border: 2px solid #e5ddd4; border-radius: 12px; overflow: hidden;
-}
-.script-header {
-display: flex; align-items: center; justify-content: space-between;
-padding: 14px 20px; cursor: pointer; user-select: none; background: #fff;
-border-bottom: 2px solid transparent; transition: background 0.2s;
-}
-.script-header:hover { background: #fdf5e8; }
-.script-header.open { border-bottom-color: #e5ddd4; }
-.script-header-title { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #6b5c4e; }
-.script-chevron { font-size: 12px; color: #9a8878; transition: transform 0.2s; display: inline-block; }
-.script-chevron.open { transform: rotate(180deg); }
-.script-body { display: none; padding: 16px 20px; }
-.script-body.open { display: block; }
-.script-card {
-border: 1.5px solid #e5ddd4; border-radius: 10px;
-padding: 14px 16px; margin-bottom: 12px; background: #fdfaf6;
-}
-.script-card:last-child { margin-bottom: 0; }
-.script-card-num {
-font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
-text-transform: uppercase; color: #9a8878; margin-bottom: 8px;
-}
-.script-lbl {
-font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
-text-transform: uppercase; color: #6b5c4e; margin: 10px 0 5px; display: block;
-}
-.script-lbl:first-of-type { margin-top: 0; }
-.script-inp {
-width: 100%; padding: 8px 10px; border: 1.5px solid #e5ddd4; border-radius: 7px;
-font-family: Helvetica, Arial, sans-serif; font-size: 13px;
-background: #fff; color: var(–bark); outline: none; resize: vertical;
-transition: border-color 0.2s;
-}
-.script-inp:focus { border-color: var(–sunlight); }
-.script-card-footer {
-display: flex; align-items: center; gap: 8px; margin-top: 12px; flex-wrap: wrap;
-}
-.script-dur-label {
-font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
-text-transform: uppercase; color: #6b5c4e; white-space: nowrap;
-}
-.script-dur-inp {
-width: 65px; padding: 7px 10px; border: 1.5px solid #e5ddd4; border-radius: 7px;
-font-family: Helvetica, Arial, sans-serif; font-size: 13px; font-weight: 700;
-background: #fff; color: var(–bark); outline: none; text-align: center;
-}
-.script-dur-inp:focus { border-color: var(–sunlight); }
-.script-apply-btn {
-padding: 7px 14px; border-radius: 7px; border: none;
-background: var(–sunlight); color: var(–bark);
-font-family: Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 700;
-letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer; flex: 1;
-}
-.script-apply-btn:hover { background: #e09610; }
-.script-regen-btn {
-padding: 7px 14px; border-radius: 7px; border: 1.5px solid #e5ddd4;
-background: #fff; color: var(–bark);
-font-family: Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 700;
-letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer; flex: 1;
-}
-.script-regen-btn:hover { border-color: var(–bark); }
-
-@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
-@keyframes spin { to { transform: rotate(360deg); } }
+.script-section{margin-top:12px;background:#fff;border:2px solid #e5ddd4;border-radius:12px;overflow:hidden;}
+.script-toggle{display:flex;align-items:center;justify-content:space-between;
+padding:13px 18px;cursor:pointer;background:#fff;border-bottom:2px solid transparent;}
+.script-toggle:hover{background:#fdf5e8;}
+.script-toggle.open{border-bottom-color:#e5ddd4;}
+.script-toggle-title{font-size:10px;font-weight:700;letter-spacing:.09em;
+text-transform:uppercase;color:#6b5c4e;}
+.script-chev{font-size:11px;color:#9a8878;display:inline-block;transition:transform .2s;}
+.script-chev.open{transform:rotate(180deg);}
+.script-content{display:none;padding:14px 18px;}
+.script-content.open{display:block;}
+.script-card{border:1.5px solid #e5ddd4;border-radius:9px;padding:13px 14px;margin-bottom:10px;background:#fdfaf6;}
+.script-card:last-child{margin-bottom:0;}
+.script-card-hdr{font-size:10px;font-weight:700;letter-spacing:.07em;
+text-transform:uppercase;color:#9a8878;margin-bottom:8px;}
+.sc-lbl{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+color:#6b5c4e;margin:9px 0 4px;display:block;}
+.sc-lbl:first-of-type{margin-top:0;}
+.sc-inp{width:100%;padding:7px 9px;border:1.5px solid #e5ddd4;border-radius:7px;
+font-family:Helvetica,Arial,sans-serif;font-size:13px;background:#fff;
+color:var(–bark);outline:none;resize:vertical;transition:border-color .2s;}
+.sc-inp:focus{border-color:var(–sun);}
+.sc-footer{display:flex;align-items:center;gap:7px;margin-top:10px;flex-wrap:wrap;}
+.sc-dur-lbl{font-size:10px;font-weight:700;letter-spacing:.07em;
+text-transform:uppercase;color:#6b5c4e;white-space:nowrap;}
+.sc-dur{width:62px;padding:6px 9px;border:1.5px solid #e5ddd4;border-radius:7px;
+font-family:Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;
+background:#fff;color:var(–bark);outline:none;text-align:center;}
+.sc-dur:focus{border-color:var(–sun);}
 </style>
 
 </head>
@@ -444,122 +254,100 @@ letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer; flex: 1;
   </div>
 </div>
 
-<!-- API KEY SCREEN -->
+<!-- ══ API SCREEN ══ -->
 
-<div id="apiScreen">
-  <div class="api-card">
+<div class="screen" id="s-api">
+  <div class="card">
     <h2>Connect Your API Keys</h2>
-    <p>This app uses two services — OpenRouter for lesson generation and ElevenLabs for natural AI voice. Both keys are saved in your browser only.</p>
+    <p>Enter your keys below. Both are saved in your browser — you only do this once.</p>
 
 ```
-<!-- OpenRouter -->
-<div style="border:2px solid #e5ddd4;border-radius:10px;padding:18px;margin-bottom:16px;">
-  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-    <div style="width:32px;height:32px;background:#6B3FA0;border-radius:7px;display:grid;place-items:center;font-size:15px;">🔀</div>
-    <div>
-      <div style="font-size:13px;font-weight:700;">OpenRouter — Lesson Generation</div>
-      <div style="font-size:11px;color:#9a8878;">Get your key at <a href="https://openrouter.ai/keys" target="_blank" style="color:var(--sky);">openrouter.ai/keys</a> — add $5 credit</div>
-    </div>
+<div class="section-box">
+  <div class="section-box-title">🔀 OpenRouter — Lesson Generation
+    <span class="section-box-sub">openrouter.ai/keys → add $5 credit</span>
   </div>
-  <div class="field" style="margin-bottom:12px;">
+  <div class="field">
     <label>OpenRouter API Key</label>
-    <input type="password" id="apiKeyInput" placeholder="sk-or-…" />
+    <input type="password" id="orKey" placeholder="sk-or-…"/>
   </div>
-  <div class="field" style="margin-bottom:0;">
+  <div class="field">
     <label>AI Model</label>
-    <select id="modelSelect">
-      <optgroup label="💰 Best Value (Recommended)">
-        <option value="google/gemini-2.0-flash-001" selected>Google Gemini 2.0 Flash — Fast &amp; very cheap</option>
-        <option value="google/gemini-flash-1.5">Google Gemini 1.5 Flash — Ultra budget</option>
-        <option value="meta-llama/llama-3.3-70b-instruct">Meta Llama 3.3 70B — Free tier available</option>
-        <option value="mistralai/mistral-small-3.1-24b-instruct">Mistral Small 3.1 — Very affordable</option>
+    <select id="orModel">
+      <optgroup label="💰 Best Value">
+        <option value="google/gemini-2.0-flash-001" selected>Gemini 2.0 Flash — Fast &amp; cheap</option>
+        <option value="google/gemini-flash-1.5">Gemini 1.5 Flash — Ultra budget</option>
+        <option value="meta-llama/llama-3.3-70b-instruct">Llama 3.3 70B — Free tier</option>
+        <option value="mistralai/mistral-small-3.1-24b-instruct">Mistral Small 3.1</option>
       </optgroup>
       <optgroup label="⚡ Mid Range">
-        <option value="anthropic/claude-haiku-4-5">Claude Haiku 4.5 — Fast &amp; capable</option>
-        <option value="openai/gpt-4.1-mini">GPT-4.1 Mini — Solid &amp; affordable</option>
-        <option value="google/gemini-2.5-flash-preview">Google Gemini 2.5 Flash — Very capable</option>
+        <option value="anthropic/claude-haiku-4-5">Claude Haiku 4.5</option>
+        <option value="openai/gpt-4.1-mini">GPT-4.1 Mini</option>
+        <option value="google/gemini-2.5-flash-preview">Gemini 2.5 Flash</option>
       </optgroup>
       <optgroup label="🚀 High Quality">
-        <option value="anthropic/claude-sonnet-4-5">Claude Sonnet 4.5 — High quality</option>
-        <option value="openai/gpt-4.1">GPT-4.1 — Premium quality</option>
+        <option value="anthropic/claude-sonnet-4-5">Claude Sonnet 4.5</option>
+        <option value="openai/gpt-4.1">GPT-4.1</option>
       </optgroup>
       <optgroup label="✏️ Custom">
-        <option value="custom">Enter model name manually…</option>
+        <option value="custom">Enter model manually…</option>
       </optgroup>
     </select>
   </div>
-  <div class="field" id="customModelField" style="display:none;margin-bottom:0;margin-top:12px;">
+  <div class="field" id="customModelWrap" style="display:none;">
     <label>Custom Model Name</label>
-    <input type="text" id="customModelInput" placeholder="e.g. mistralai/mixtral-8x7b-instruct" />
+    <input type="text" id="customModel" placeholder="e.g. mistralai/mixtral-8x7b-instruct"/>
   </div>
 </div>
 
-<!-- OpenAI TTS -->
-<div style="border:2px solid #e5ddd4;border-radius:10px;padding:18px;margin-bottom:20px;">
-  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-    <div style="width:32px;height:32px;background:#F5A623;border-radius:7px;display:grid;place-items:center;font-size:15px;">🎙️</div>
-    <div>
-      <div style="font-size:13px;font-weight:700;">OpenAI — AI Voice (TTS)</div>
-      <div style="font-size:11px;color:#9a8878;">Get your key at <a href="https://platform.openai.com/api-keys" target="_blank" style="color:var(--sky);">platform.openai.com/api-keys</a> → Create key • Add $5 credit in Billing — lasts months</div>
-    </div>
+<div class="section-box">
+  <div class="section-box-title">🎙️ OpenAI — Voice (optional)
+    <span class="section-box-sub">platform.openai.com/api-keys → add $5</span>
   </div>
-  <div class="field" style="margin-bottom:0;">
-    <label>OpenAI API Key <span style="font-weight:400;text-transform:none;letter-spacing:0;">(optional — lessons work without it)</span></label>
-    <input type="password" id="elevenLabsKeyInput" placeholder="sk-…" />
+  <div class="field">
+    <label>OpenAI API Key <span style="font-weight:400;text-transform:none;">(optional)</span></label>
+    <input type="password" id="oaiKey" placeholder="sk-…"/>
   </div>
 </div>
 
-<button type="button" class="generate-btn" id="continueBtn" onclick="saveApiKey()">▶ &nbsp; Continue to Lesson Builder</button>
+<button class="btn-primary" id="continueBtn">▶ &nbsp;Continue to Lesson Builder</button>
 ```
 
   </div>
 </div>
 
-<!-- SETUP -->
+<!-- ══ SETUP SCREEN ══ -->
 
-<div id="setup">
-  <h1>Build Your Lesson Video</h1>
-  <p class="subtitle">Pick a subject, choose a topic from your playbook, set the age group — then hit Generate.</p>
+<div class="screen" id="s-setup">
+  <h1 style="font-size:clamp(22px,4vw,30px);font-weight:700;margin-bottom:6px;">Build Your Lesson</h1>
+  <p style="color:#6b5c4e;font-size:14px;margin-bottom:22px;">Pick a subject, choose a topic, set age group — then Generate.</p>
 
-  <div class="row" style="margin-bottom:16px;">
+  <div class="row" style="margin-bottom:14px;">
     <div class="field" style="margin-bottom:0;">
       <label>Subject</label>
-      <select id="subject" onchange="renderTopics()">
-        <option value="Scheduling">Structure &amp; Scheduling</option>
-        <option value="Math">Math</option>
-        <option value="Language Arts">Reading &amp; Language Arts</option>
-        <option value="History">History &amp; Social Studies</option>
-        <option value="Science">Science</option>
-        <option value="Arts">Arts, Music &amp; Life Skills</option>
-        <option value="Fitness">Physical Fitness &amp; Movement</option>
-        <option value="Extracurricular">Extracurricular &amp; Creative Arts</option>
-        <option value="General Knowledge">General Knowledge &amp; Critical Thinking</option>
-        <option value="Spiritual">Spiritual &amp; Character Development</option>
-        <option value="Life Skills">Life Skills &amp; Real World Prep</option>
-      </select>
+      <select id="subjectSel"></select>
     </div>
     <div class="field" style="margin-bottom:0;">
       <label>Age Group</label>
-      <select id="ageGroup">
-        <option value="Toddlers Ages 2-4">Toddlers (Ages 2–4)</option>
-        <option value="Elementary Ages 5-7">Elementary (Ages 5–7)</option>
-        <option value="Elementary Ages 7-9" selected>Elementary (Ages 7–9)</option>
-        <option value="Elementary Ages 8-10">Elementary (Ages 8–10)</option>
-        <option value="Middle School Ages 11-13">Middle School (Ages 11–13)</option>
-        <option value="High School Ages 14-18">High School (Ages 14–18)</option>
+      <select id="ageSel">
+        <option value="Toddlers Ages 2-4">Toddlers (2–4)</option>
+        <option value="Elementary Ages 5-7">Elementary (5–7)</option>
+        <option value="Elementary Ages 7-9" selected>Elementary (7–9)</option>
+        <option value="Elementary Ages 8-10">Elementary (8–10)</option>
+        <option value="Middle School Ages 11-13">Middle School (11–13)</option>
+        <option value="High School Ages 14-18">High School (14–18)</option>
         <option value="All Ages">All Ages</option>
       </select>
     </div>
   </div>
 
   <div class="field">
-    <label>Topic — <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;">select from your playbook or type a custom topic below</span></label>
+    <label>Topic — tap to select from your playbook</label>
     <div class="topic-grid" id="topicGrid"></div>
   </div>
 
   <div class="field">
-    <label>Custom Topic <span style="font-weight:400;text-transform:none;letter-spacing:0;">(optional)</span></label>
-    <input id="customTopic" type="text" placeholder="Type a custom topic to override the selection above…" oninput="clearTopicSelection()" />
+    <label>Custom Topic <span style="font-weight:400;text-transform:none;">(optional override)</span></label>
+    <input type="text" id="customTopic" placeholder="Type any topic…"/>
   </div>
 
   <div class="row">
@@ -573,7 +361,7 @@ letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer; flex: 1;
     </div>
     <div class="field">
       <label>Slide Duration</label>
-      <select id="duration">
+      <select id="slideDurSel">
         <option value="8">8 seconds</option>
         <option value="12" selected>12 seconds</option>
         <option value="18">18 seconds</option>
@@ -582,23 +370,24 @@ letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer; flex: 1;
     </div>
   </div>
 
-<button class="generate-btn" id="generateBtn" onclick="generateLesson()">▶   Hit Play. Start Learning.</button>
+<button class="btn-primary" id="generateBtn">▶  Hit Play. Start Learning.</button>
 
-  <div style="text-align:center;margin-top:12px;">
-    <button class="new-lesson-btn" onclick="changeApiKey()">🔑 Change API Key</button>
+  <div style="text-align:center;margin-top:10px;">
+    <button class="link-btn" id="changeKeysBtn">🔑 Change API Keys</button>
   </div>
 </div>
 
-<!-- LOADING -->
+<!-- ══ LOADING ══ -->
 
-<div id="loading">
+<div class="screen" id="s-loading">
   <div class="spinner"></div>
-  <div class="loading-text" id="loadingText">Building your lesson…</div>
+  <div class="loading-text" id="loadingMsg">Building your lesson…</div>
 </div>
 
-<!-- PLAYER -->
+<!-- ══ PLAYER ══ -->
 
-<div id="player">
+<div class="screen" id="s-player">
+
   <div class="video-wrapper">
     <div class="video-frame" id="videoFrame">
       <div class="video-topbar">
@@ -607,1026 +396,650 @@ letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer; flex: 1;
           <div class="video-channel-name">Homeschool Tools 4 U</div>
         </div>
         <div class="video-tags">
-          <div class="tag" id="ageTag">AGES 7-9</div>
-          <div class="tag" id="subjectTag">MATH</div>
+          <div class="vtag" id="ageTag">AGES 7-9</div>
+          <div class="vtag" id="subTag">MATH</div>
         </div>
       </div>
       <div class="video-content">
         <div class="slide-inner" id="slideInner"></div>
       </div>
       <div class="video-progressbar">
-        <div class="video-progressfill" id="videoProgressFill"></div>
+        <div class="video-progressfill" id="progressFill"></div>
       </div>
     </div>
   </div>
+
   <div class="controls">
-    <button class="ctrl-btn" id="prevBtn" onclick="prevSlide()">← Prev</button>
+    <button class="btn-outline" id="prevBtn">← Prev</button>
     <div class="center-controls">
-      <div class="timer-pill" id="timerDisplay">12s</div>
-      <button class="play-btn" id="playBtn" onclick="togglePlay()">⏸ Pause</button>
+      <div class="timer-pill" id="timerPill">—</div>
+      <button class="btn-dark" id="playBtn">⏸ Pause</button>
     </div>
-    <button class="ctrl-btn" id="nextBtn" onclick="nextSlide()">Next →</button>
+    <button class="btn-outline" id="nextBtn">Next →</button>
   </div>
+
   <div class="footer-row">
-    <div class="slide-counter" id="slideCounter">Slide 1 of 7</div>
-    <div style="display:flex;gap:10px;align-items:center;">
-      <button class="new-lesson-btn" onclick="restartVideo()">↺ Restart Video</button>
-      <button class="new-lesson-btn" onclick="restartLesson()">↩ New Lesson</button>
+    <div class="slide-counter" id="slideCtr">Slide 1 of 7</div>
+    <div class="footer-btns">
+      <button class="link-btn" id="restartVideoBtn">↺ Restart</button>
+      <button class="link-btn" id="newLessonBtn">↩ New Lesson</button>
     </div>
   </div>
 
-  <!-- VOICE PANEL -->
+  <!-- VOICE -->
 
-  <div class="voice-section">
-    <div class="voice-row">
-      <span class="voice-section-title">🎙️ OpenAI Voice</span>
-      <select class="voice-select" id="voiceSelect">
-        <optgroup label="👩 Female Voices">
+  <div class="panel">
+    <div class="panel-row">
+      <span class="panel-label">🎙️ Voice</span>
+      <select class="voice-sel" id="voiceSel">
+        <optgroup label="👩 Female">
           <option value="nova">Nova — Warm &amp; Friendly</option>
           <option value="shimmer">Shimmer — Soft &amp; Clear</option>
           <option value="coral">Coral — Bright &amp; Energetic</option>
         </optgroup>
-        <optgroup label="👨 Male Voices">
+        <optgroup label="👨 Male">
           <option value="alloy">Alloy — Neutral &amp; Balanced</option>
           <option value="echo">Echo — Smooth &amp; Calm</option>
-          <option value="fable">Fable — Expressive &amp; Story-like</option>
+          <option value="fable">Fable — Expressive</option>
           <option value="onyx">Onyx — Deep &amp; Authoritative</option>
         </optgroup>
       </select>
-      <button class="voice-action-btn preview-btn" onclick="previewVoice()">🔈 Preview</button>
-      <button class="voice-action-btn mute-btn" id="muteBtn" onclick="toggleMute()">🔊 ON</button>
+      <button class="btn-sm btn-sun" id="previewBtn">🔈 Preview</button>
+      <button class="btn-sm" id="muteBtn">🔊 ON</button>
     </div>
-    <div class="voice-row" style="margin-top:10px;">
-      <span class="voice-speed-label">Speed</span>
-      <input type="range" class="voice-speed" id="voiceSpeed" min="0.7" max="1.3" step="0.05" value="1.0" oninput="updateSpeedLabel(this.value)"/>
-      <span id="voiceSpeedVal" style="font-size:12px;font-weight:700;color:#6b5c4e;min-width:34px;">1.0×</span>
-      <div id="voiceStatus" style="font-size:11px;font-weight:700;color:#3d6b4f;letter-spacing:0.03em;margin-left:8px;"></div>
+    <div class="panel-row" style="margin-top:9px;">
+      <span class="panel-label">Speed</span>
+      <input type="range" class="speed-range" id="voiceSpeed" min="0.7" max="1.3" step="0.05" value="1.0"/>
+      <span id="speedVal" style="font-size:12px;font-weight:700;color:#6b5c4e;min-width:32px;">1.0×</span>
+      <span class="voice-status" id="voiceStatus"></span>
     </div>
   </div>
 
-  <!-- THUMBNAIL DOWNLOAD -->
+  <!-- THUMBNAIL -->
 
-  <div class="thumbnail-section">
-    <div class="thumbnail-section-title">📥 YouTube Thumbnail — Download for this lesson</div>
-    <div class="thumbnail-preview-wrap">
-      <canvas id="thumbnailCanvas" width="1280" height="672"></canvas>
-    </div>
-    <button class="download-thumb-btn" onclick="downloadThumbnail()">⬇ Download Thumbnail (1280×672)</button>
+  <div class="thumb-section">
+    <div class="thumb-title">📥 YouTube Thumbnail</div>
+    <div class="thumb-wrap"><canvas id="thumbCanvas" width="1280" height="672"></canvas></div>
+    <button class="btn-download" id="downloadThumbBtn">⬇ Download Thumbnail (1280×672)</button>
   </div>
 
   <!-- SCRIPT EDITOR -->
 
   <div class="script-section">
-    <div class="script-header" id="scriptHeader" onclick="toggleScriptEditor()">
-      <span class="script-header-title">✏️ Edit Script &amp; Slide Timing</span>
-      <span class="script-chevron" id="scriptChevron">▼</span>
+    <div class="script-toggle" id="scriptToggle">
+      <span class="script-toggle-title">✏️ Edit Script &amp; Slide Timing</span>
+      <span class="script-chev" id="scriptChev">▼</span>
     </div>
-    <div class="script-body" id="scriptBody">
+    <div class="script-content" id="scriptContent">
       <div id="scriptCards"></div>
     </div>
   </div>
-</div>
+
+</div><!-- end player -->
 
 <script>
+// ══════════════════════════════════════
+// DATA
+// ══════════════════════════════════════
 const TOPICS = {
-  "Scheduling": [
-    "Daily School Schedule Timer",
-    "Subject Block Timer",
-    "Morning Circle Time Routine",
-    "Homework Sprint Timer",
-    "End of School Day Wrap-Up",
-    "Full School Day Session Timer 6 Hour Day"
-  ],
-  "Math": [
-    "Counting Along 1 to 20",
-    "Counting Along 1 to 100",
-    "Multiplication Table Drill x2 and x3",
-    "Multiplication Table Drill x4 and x5",
-    "Multiplication Table Drill x6 and x7",
-    "Multiplication Table Drill x8 and x9",
-    "Skip Counting by 2s Visual",
-    "Skip Counting by 5s and 10s Visual",
-    "Long Division Walkthrough Step by Step",
-    "Fraction Visualizer Halves Thirds Quarters",
-    "Math Word Problem Walkthrough",
-    "Times Table Speed Drill",
-    "Geometry Shape Explorer",
-    "Place Value Visual Tool",
-    "Mental Math Challenge"
-  ],
-  "Language Arts": [
-    "Phonics Sound Drill A to G",
-    "Phonics Sound Drill H to P",
-    "Phonics Sound Drill Q to Z",
-    "Sight Word Flashcard Session Level 1",
-    "Sight Word Flashcard Session Level 2",
-    "Spelling Bee Practice Grade 1 Words",
-    "Spelling Bee Practice Grade 2 Words",
-    "Spelling Bee Practice Grade 5 Words",
-    "Grammar Rule of the Day Nouns and Verbs",
-    "Vocabulary Builder Session Grade 5 Words",
-    "Punctuation Visual Guide",
-    "Parts of Speech Identifier Full Sentence",
-    "Reading Comprehension Walkthrough",
-    "Creative Writing Prompt Timer",
-    "Handwriting Stroke Guide"
-  ],
-  "History": [
-    "This Day in History Daily Series",
-    "Timeline Builder Ancient Civilizations",
-    "World Leader Flashcards",
-    "Map Study Tool",
-    "Historical Figure of the Week",
-    "Government Structure Visual 3 Branches",
-    "World Cultures Spotlight Japan",
-    "Constitution & Amendments Breakdown"
-  ],
-  "Science": [
-    "Scientific Method Walkthrough",
-    "Solar System Tour All 8 Planets",
-    "Human Body System Explorer Skeletal",
-    "Animal Kingdom Classification Mammals",
-    "Weather Pattern Explainer Rain and Storms",
-    "Periodic Table Element of the Day",
-    "Life Cycle Visual Butterfly",
-    "Food Chain Builder Forest Ecosystem",
-    "Simple Machines Visual Guide",
-    "States of Matter Visual Solid Liquid Gas"
-  ],
-  "Arts": [
-    "Draw Along Step by Step Simple Animal",
-    "Music Note Flashcards Treble Clef",
-    "Color Theory Visual Primary and Secondary",
-    "Life Skills Walkthrough How to Do Laundry",
-    "Financial Literacy for Kids",
-    "Critical Thinking Puzzle",
-    "Foreign Language Phrase of the Day",
-    "Typing Speed Challenge Timer",
-    "Speed Reading Trainer",
-    "Flashcard Study Timer"
-  ],
-  "Fitness": [
-    "Morning Movement Warm-Up",
-    "PE Class Session 20 Min Full Workout",
-    "Yoga for Kids Morning Flow",
-    "Dance Along Video Follow the Moves",
-    "Balance and Coordination Drills Motor Skills",
-    "Sports Skills Breakdown",
-    "Fitness Challenge of the Week",
-    "Cool Down and Stretch Routine After School",
-    "Obstacle Course Guide",
-    "Brain Break Movement Video 5 Min Burst"
-  ],
-  "Extracurricular": [
-    "Acting and Drama Exercise",
-    "Public Speaking Practice 3 Min Topic",
-    "Debate Topic of the Week",
-    "Chess Move of the Day Opening Moves",
-    "Coding Concept of the Day What is a Loop",
-    "Photography Composition Guide",
-    "Filmmaking Basics",
-    "Origami Follow Along",
-    "Knitting and Crochet Step by Step",
-    "Cooking Lesson for Kids",
-    "Gardening Guide",
-    "Basic First Aid Visual Guide",
-    "Map Reading and Navigation",
-    "Woodworking Basics for Kids"
-  ],
-  "General Knowledge": [
-    "World Records of the Day Nature Edition",
-    "How Things Work How Does the Internet Work",
-    "Famous Inventions Timeline",
-    "Logical Fallacy of the Week Ad Hominem",
-    "Philosophy Concept for Kids",
-    "Economics Basics Visual",
-    "Current Events Briefing",
-    "Famous Speeches Breakdown",
-    "Architecture of the World",
-    "Ocean and Deep Sea Explorer",
-    "Space Exploration Timeline"
-  ],
-  "Spiritual": [
-    "Scripture Memory Tool Psalm 23",
-    "Bible Story Visual David and Goliath",
-    "Verse of the Day Meditation",
-    "Fruit of the Spirit Series",
-    "Prayer Guide for Kids",
-    "Character Trait of the Week Honesty",
-    "World Religions Overview",
-    "Moral Dilemma Discussion Starter",
-    "Gratitude Practice Session",
-    "Servant Leadership Visual",
-    "10 Commandments Breakdown",
-    "Parables of Jesus Visual",
-    "Saints and Heroes of Faith",
-    "Ethics and Decision Making Framework",
-    "Mindfulness and Stillness Practice"
-  ],
-  "Life Skills": [
-    "Manners and Etiquette Guide",
-    "Time Management Visual",
-    "Goal Setting Workshop",
-    "Conflict Resolution Framework",
-    "Money Management for Teens",
-    "Interview Skills Prep",
-    "Emotional Intelligence Builder",
-    "Leadership Skills Series",
-    "Student Loan and Financial Aid Visual"
-  ]
+  "Scheduling":["Daily School Schedule Timer","Subject Block Timer","Morning Circle Time Routine","Homework Sprint Timer","End of School Day Wrap-Up","Full School Day Session Timer"],
+  "Math":["Counting Along 1 to 20","Counting Along 1 to 100","Multiplication Table Drill x2 and x3","Multiplication Table Drill x4 and x5","Multiplication Table Drill x6 and x7","Multiplication Table Drill x8 and x9","Skip Counting by 2s","Skip Counting by 5s and 10s","Long Division Walkthrough","Fraction Visualizer","Math Word Problem Walkthrough","Times Table Speed Drill","Geometry Shape Explorer","Place Value Visual Tool","Mental Math Challenge"],
+  "Language Arts":["Phonics Sound Drill A to G","Phonics Sound Drill H to P","Phonics Sound Drill Q to Z","Sight Word Flashcards Level 1","Sight Word Flashcards Level 2","Spelling Bee Grade 1","Spelling Bee Grade 2","Spelling Bee Grade 5","Grammar Rule of the Day","Vocabulary Builder Grade 5","Punctuation Visual Guide","Parts of Speech Identifier","Reading Comprehension Walkthrough","Creative Writing Prompt Timer","Handwriting Stroke Guide"],
+  "History":["This Day in History","Timeline Builder Ancient Civilizations","World Leader Flashcards","Map Study Tool","Historical Figure of the Week","Government Structure 3 Branches","World Cultures Spotlight","Constitution & Amendments Breakdown"],
+  "Science":["Scientific Method Walkthrough","Solar System Tour","Human Body System Explorer","Animal Kingdom Classification","Weather Pattern Explainer","Periodic Table Element of the Day","Life Cycle Visual","Food Chain Builder","Simple Machines Visual Guide","States of Matter Visual"],
+  "Arts":["Draw Along Step by Step","Music Note Flashcards","Color Theory Visual","Life Skills Walkthrough","Financial Literacy for Kids","Critical Thinking Puzzle","Foreign Language Phrase of the Day","Typing Speed Challenge","Speed Reading Trainer","Flashcard Study Timer"],
+  "Fitness":["Morning Movement Warm-Up","PE Class Session","Yoga for Kids","Dance Along Video","Balance and Coordination Drills","Sports Skills Breakdown","Fitness Challenge of the Week","Cool Down and Stretch","Obstacle Course Guide","Brain Break Movement Video"],
+  "Extracurricular":["Acting and Drama Exercise","Public Speaking Practice","Debate Topic of the Week","Chess Move of the Day","Coding Concept of the Day","Photography Composition Guide","Filmmaking Basics","Origami Follow Along","Cooking Lesson for Kids","Gardening Guide","Basic First Aid Visual Guide","Map Reading and Navigation"],
+  "General Knowledge":["World Records of the Day","How Things Work","Famous Inventions Timeline","Logical Fallacy of the Week","Philosophy Concept for Kids","Economics Basics Visual","Current Events Briefing","Famous Speeches Breakdown","Architecture of the World","Ocean and Deep Sea Explorer","Space Exploration Timeline"],
+  "Spiritual":["Scripture Memory Tool","Bible Story Visual","Verse of the Day Meditation","Fruit of the Spirit Series","Prayer Guide for Kids","Character Trait of the Week","World Religions Overview","Moral Dilemma Discussion","Gratitude Practice Session","Servant Leadership Visual","10 Commandments Breakdown","Parables of Jesus Visual","Saints and Heroes of Faith","Ethics and Decision Making","Mindfulness and Stillness Practice"],
+  "Life Skills":["Manners and Etiquette Guide","Time Management Visual","Goal Setting Workshop","Conflict Resolution Framework","Money Management for Teens","Interview Skills Prep","Emotional Intelligence Builder","Leadership Skills Series","Student Loan and Financial Aid Visual"]
 };
 
-const SUBJECT_COLORS = {
-  'Math': '#3B82C4', 'Language Arts': '#7D5A3C', 'Science': '#4A7C59',
-  'History': '#D35400', 'Fitness': '#C0392B', 'Spiritual': '#6B3FA0',
-  'Scheduling': '#3B82C4', 'General Knowledge': '#1A6B8A',
-  'Life Skills': '#1A6B8A', 'Arts': '#6B3FA0', 'Extracurricular': '#4A7C59'
+const SUBJ_COLORS = {
+  "Scheduling":"#3B82C4","Math":"#3B82C4","Language Arts":"#7D5A3C","History":"#D35400",
+  "Science":"#4A7C59","Arts":"#6B3FA0","Fitness":"#C0392B","Extracurricular":"#4A7C59",
+  "General Knowledge":"#1A6B8A","Spiritual":"#6B3FA0","Life Skills":"#1A6B8A"
 };
 
-let selectedTopic = '', slides = [], currentSlide = 0;
-let isPlaying = false, timer = null, timeLeft = 12, slideDuration = 12;
-let apiKey = '', aiModel = 'google/gemini-2.0-flash-001', elevenLabsKey = '';
+// ══════════════════════════════════════
+// STATE
+// ══════════════════════════════════════
+let orKey='', orModel='google/gemini-2.0-flash-001', oaiKey='';
+let slides=[], slideDurs=[], currentSlide=0, isPlaying=false;
+let defaultDur=12, playTimer=null, voiceMuted=false;
+let sharedAudio=null, selectedTopic='';
 
-// Show/hide custom model input — attached in window.onload
+// ══════════════════════════════════════
+// SHOW / HIDE SCREENS
+// ══════════════════════════════════════
+function show(id){
+  ['s-api','s-setup','s-loading','s-player'].forEach(s=>{
+    document.getElementById(s).style.display = s===id
+      ? (id==='s-loading' ? 'flex' : 'block') : 'none';
+  });
+}
 
-function saveApiKey() {
+// ══════════════════════════════════════
+// INIT
+// ══════════════════════════════════════
+window.addEventListener('load', ()=>{
+  // Model select toggle
+  document.getElementById('orModel').addEventListener('change', e=>{
+    document.getElementById('customModelWrap').style.display =
+      e.target.value==='custom' ? 'block' : 'none';
+  });
+
+  // Continue button
+  document.getElementById('continueBtn').addEventListener('click', doSaveKeys);
+
+  // Change keys button
+  document.getElementById('changeKeysBtn').addEventListener('click', ()=>show('s-api'));
+
+  // Generate button
+  document.getElementById('generateBtn').addEventListener('click', doGenerate);
+
+  // Player buttons
+  document.getElementById('prevBtn').addEventListener('click', goPrev);
+  document.getElementById('nextBtn').addEventListener('click', goNext);
+  document.getElementById('playBtn').addEventListener('click', doTogglePlay);
+  document.getElementById('restartVideoBtn').addEventListener('click', doRestartVideo);
+  document.getElementById('newLessonBtn').addEventListener('click', doNewLesson);
+  document.getElementById('previewBtn').addEventListener('click', doPreviewVoice);
+  document.getElementById('muteBtn').addEventListener('click', doToggleMute);
+  document.getElementById('downloadThumbBtn').addEventListener('click', doDownloadThumb);
+  document.getElementById('scriptToggle').addEventListener('click', doToggleScript);
+  document.getElementById('voiceSpeed').addEventListener('input', e=>{
+    document.getElementById('speedVal').textContent = parseFloat(e.target.value).toFixed(2)+'×';
+  });
+  document.getElementById('customTopic').addEventListener('input', ()=>{
+    document.querySelectorAll('.topic-btn').forEach(b=>b.classList.remove('sel'));
+    selectedTopic='';
+  });
+
+  // Populate subject dropdown
+  const subSel = document.getElementById('subjectSel');
+  Object.keys(TOPICS).forEach(s=>{
+    const o = document.createElement('option');
+    o.value=s; o.textContent=s; subSel.appendChild(o);
+  });
+  subSel.addEventListener('change', renderTopics);
+  renderTopics();
+
+  // Load saved keys
   try {
-    const key = document.getElementById('apiKeyInput').value.trim();
-    if (!key) { alert('Please enter your OpenRouter API key.'); return; }
+    const sk = localStorage.getItem('ht4u_or')||'';
+    const sm = localStorage.getItem('ht4u_model')||'google/gemini-2.0-flash-001';
+    const so = localStorage.getItem('ht4u_oai')||'';
+    if(sk){ orKey=sk; orModel=sm; oaiKey=so; show('s-setup'); }
+  } catch(e){}
+});
 
-    const modelSel = document.getElementById('modelSelect').value;
-    const model = modelSel === 'custom'
-      ? (document.getElementById('customModelInput').value.trim())
-      : modelSel;
-    if (!model) { alert('Please select or enter a model name.'); return; }
-
-    const elKey = document.getElementById('elevenLabsKeyInput').value.trim();
-
-    apiKey        = key;
-    aiModel       = model;
-    elevenLabsKey = elKey;
-    try {
-      localStorage.setItem('ht4u_apikey', key);
-      localStorage.setItem('ht4u_model',  model);
-      localStorage.setItem('ht4u_elkey',  elKey);
-    } catch(e) {}
-
-    document.getElementById('apiScreen').style.display = 'none';
-    document.getElementById('setup').style.display = 'block';
-    renderTopics();
-  } catch(err) {
-    alert('Error saving keys: ' + err.message);
-  }
+// ══════════════════════════════════════
+// API KEYS
+// ══════════════════════════════════════
+function doSaveKeys(){
+  const k = document.getElementById('orKey').value.trim();
+  if(!k){ alert('Please enter your OpenRouter API key.'); return; }
+  const ms = document.getElementById('orModel').value;
+  const m = ms==='custom'
+    ? document.getElementById('customModel').value.trim()
+    : ms;
+  if(!m){ alert('Please select or enter a model name.'); return; }
+  const o = document.getElementById('oaiKey').value.trim();
+  orKey=k; orModel=m; oaiKey=o;
+  try{
+    localStorage.setItem('ht4u_or', k);
+    localStorage.setItem('ht4u_model', m);
+    localStorage.setItem('ht4u_oai', o);
+  }catch(e){}
+  show('s-setup');
 }
 
-function changeApiKey() {
-  document.getElementById('setup').style.display = 'none';
-  document.getElementById('player').style.display = 'none';
-  document.getElementById('apiScreen').style.display = 'block';
-  document.getElementById('apiKeyInput').value = apiKey;
-  document.getElementById('elevenLabsKeyInput').value = elevenLabsKey;
-  const sel = document.getElementById('modelSelect');
-  let found = false;
-  for (let opt of sel.options) { if (opt.value === aiModel) { sel.value = aiModel; found = true; break; } }
-  if (!found) {
-    sel.value = 'custom';
-    document.getElementById('customModelField').style.display = 'block';
-    document.getElementById('customModelInput').value = aiModel;
-  }
-}
-
-function renderTopics() {
-  const subject = document.getElementById('subject').value;
-  const color = SUBJECT_COLORS[subject] || '#3B82C4';
-  document.documentElement.style.setProperty('--subject-color', color);
-  const frame = document.getElementById('videoFrame');
-  if (frame) frame.style.backgroundColor = color;
-  selectedTopic = '';
-  document.getElementById('customTopic').value = '';
+// ══════════════════════════════════════
+// TOPIC RENDERING
+// ══════════════════════════════════════
+function renderTopics(){
+  const subj = document.getElementById('subjectSel').value;
+  const color = SUBJ_COLORS[subj]||'#3B82C4';
+  document.documentElement.style.setProperty('--sub', color);
+  selectedTopic='';
+  document.getElementById('customTopic').value='';
   const grid = document.getElementById('topicGrid');
-  const topics = TOPICS[subject] || [];
-  grid.innerHTML = topics.map(t =>
-    `<button class="topic-btn" onclick="selectTopic(this,'${t.replace(/'/g,"\\'")}')">${t}</button>`
+  grid.innerHTML = (TOPICS[subj]||[]).map(t=>
+    `<button class="topic-btn" data-topic="${t.replace(/"/g,'&quot;')}">${t}</button>`
   ).join('');
-}
-
-function selectTopic(btn, topic) {
-  document.querySelectorAll('.topic-btn').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-  selectedTopic = topic;
-  document.getElementById('customTopic').value = '';
-}
-
-function clearTopicSelection() {
-  document.querySelectorAll('.topic-btn').forEach(b => b.classList.remove('selected'));
-  selectedTopic = '';
-}
-
-async function generateLesson() {
-  const topic = document.getElementById('customTopic').value.trim() || selectedTopic;
-  if (!topic) { alert('Please select a topic from the list or type a custom one.'); return; }
-  const subject = document.getElementById('subject').value;
-  const ageGroup = document.getElementById('ageGroup').value;
-  const numSlides = parseInt(document.getElementById('numSlides').value);
-  slideDuration = parseInt(document.getElementById('duration').value);
-
-  const color = SUBJECT_COLORS[subject] || '#3B82C4';
-  document.documentElement.style.setProperty('--subject-color', color);
-  document.getElementById('videoFrame').style.backgroundColor = color;
-  document.getElementById('ageTag').textContent = ageGroup.toUpperCase();
-  document.getElementById('subjectTag').textContent = subject.toUpperCase();
-
-  document.getElementById('generateBtn').disabled = true;
-  document.getElementById('setup').style.display = 'none';
-  const loadingEl = document.getElementById('loading');
-  loadingEl.style.display = 'flex';
-
-  const msgs = ['Researching the topic…','Writing lesson content…','Structuring slides…','Almost ready…'];
-  let mi = 0;
-  const msgInt = setInterval(() => {
-    document.getElementById('loadingText').textContent = msgs[mi++ % msgs.length];
-  }, 1600);
-
-  try {
-    const prompt = `You are an expert homeschool content creator for "Homeschool Tools 4 U" (tagline: Hit Play. Start Learning.).
-Create a complete animated screen lesson on: "${topic}"
-Subject: ${subject} | Age group: ${ageGroup}
-
-Return ONLY a JSON object (no markdown, no preamble):
-{
-  "title": "Lesson title",
-  "slides": [
-    {
-      "tag": "Introduction",
-      "heading": "Bold clear heading",
-      "body": "1-2 clear sentences for the age group.",
-      "bullets": ["Short point", "Short point"]
-    }
-  ]
-}
-
-Rules:
-- Exactly ${numSlides} slides. First = Introduction, last = Summary.
-- Body: 1-2 sentences, age-appropriate for "${ageGroup}".
-- Bullets: 2-4 short punchy points per slide (or [] if not needed).
-- Text must be large and readable — this is displayed on screen like a video.
-- One clear concept per slide. Keep it clean and focused.
-- Return ONLY valid JSON, nothing else.`;
-
-    const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`,
-        "HTTP-Referer": "https://homeschooltools4u.com",
-        "X-Title": "Homeschool Tools 4 U Lesson Player"
-      },
-      body: JSON.stringify({
-        model: aiModel,
-        max_tokens: 8192,
-        messages: [{ role: "user", content: prompt }]
-      })
+  grid.querySelectorAll('.topic-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      grid.querySelectorAll('.topic-btn').forEach(b=>b.classList.remove('sel'));
+      btn.classList.add('sel');
+      selectedTopic = btn.dataset.topic;
+      document.getElementById('customTopic').value='';
     });
+  });
+}
 
+// ══════════════════════════════════════
+// GENERATE LESSON
+// ══════════════════════════════════════
+async function doGenerate(){
+  const topic = document.getElementById('customTopic').value.trim() || selectedTopic;
+  if(!topic){ alert('Please select or type a topic.'); return; }
+  const subj  = document.getElementById('subjectSel').value;
+  const age   = document.getElementById('ageSel').value;
+  const nsl   = parseInt(document.getElementById('numSlides').value);
+  defaultDur  = parseInt(document.getElementById('slideDurSel').value);
+
+  const color = SUBJ_COLORS[subj]||'#3B82C4';
+  document.getElementById('videoFrame').style.background = color;
+  document.documentElement.style.setProperty('--sub', color);
+  document.getElementById('ageTag').textContent = age.toUpperCase();
+  document.getElementById('subTag').textContent  = subj.toUpperCase();
+
+  show('s-loading');
+  const msgs=['Researching topic…','Writing lesson…','Structuring slides…','Almost ready…'];
+  let mi=0;
+  const msgInt = setInterval(()=>{
+    document.getElementById('loadingMsg').textContent = msgs[mi++%msgs.length];
+  },1600);
+
+  const prompt = `You are an expert homeschool content creator for "Homeschool Tools 4 U".
+Create a lesson on: "${topic}" | Subject: ${subj} | Age: ${age}
+Return ONLY valid JSON (no markdown):
+{"title":"Lesson title","slides":[{"tag":"Introduction","heading":"Bold heading","body":"1-2 sentences.","bullets":["point","point"]}]}
+Rules: Exactly ${nsl} slides. First=Introduction, last=Summary. Body: 1-2 sentences. Bullets: 2-4 short points or []. Return ONLY JSON.`;
+
+  try{
+    const res = await fetch('https://openrouter.ai/api/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${orKey}`,
+        'HTTP-Referer':'https://homeschooltools4u.com','X-Title':'HT4U'},
+      body:JSON.stringify({model:orModel,max_tokens:8192,messages:[{role:'user',content:prompt}]})
+    });
     const data = await res.json();
-    if (data.error) throw new Error(data.error.message);
-    const text = data.choices?.[0]?.message?.content || '';
-    const clean = text.replace(/```json|```/g, '').trim();
+    if(data.error) throw new Error(data.error.message);
+    const raw = data.choices?.[0]?.message?.content||'';
+    const clean = raw.replace(/```json|```/g,'').trim();
     const lesson = JSON.parse(clean);
-
     clearInterval(msgInt);
-    loadingEl.style.display = 'none';
     slides = lesson.slides;
-    slideDurations = slides.map(() => slideDuration);
-    currentSlide = 0;
-    showSlide(0);
-    document.getElementById('player').style.display = 'block';
-    startPlay();
-    setTimeout(drawThumbnail, 100);
-
-  } catch(e) {
+    slideDurs = slides.map(()=>defaultDur);
+    currentSlide=0;
+    show('s-player');
+    renderSlide(0);
+    renderScriptEditor();
+    setTimeout(drawThumbnail,100);
+    doStartPlay();
+  }catch(e){
     clearInterval(msgInt);
-    loadingEl.style.display = 'none';
-    document.getElementById('setup').style.display = 'block';
-    document.getElementById('generateBtn').disabled = false;
-    alert('Error: ' + (e.message || 'Check your API key and try again.'));
+    show('s-setup');
+    alert('Error: '+(e.message||'Check your API key and try again.'));
   }
 }
 
-function isCountingSlide(slide) {
-  const hasManyNumbers = slide.bullets && slide.bullets.length >= 3 &&
-    slide.bullets.every(b => /^\d+/.test(b.trim()) ||
-      /^(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty)/i.test(b.trim()));
-  const countingHeading = /\b(count|counting|number|numbers|1|2|3|4|5|6|7|8|9|10)\b/i.test(slide.heading);
-  return hasManyNumbers || (countingHeading && slide.bullets && slide.bullets.length >= 3);
+// ══════════════════════════════════════
+// SLIDE RENDERING
+// ══════════════════════════════════════
+function getEmoji(slide){
+  const t=(slide.heading+' '+slide.body+' '+(slide.bullets||[]).join(' ')).toLowerCase();
+  const map=[[/star/,'⭐'],[/sun/,'☀️'],[/moon/,'🌙'],[/apple/,'🍎'],[/orange/,'🍊'],
+    [/banana/,'🍌'],[/cookie/,'🍪'],[/cake/,'🎂'],[/candy|lollipop/,'🍭'],[/balloon/,'🎈'],
+    [/ball/,'⚽'],[/block/,'🧱'],[/flower/,'🌸'],[/tree/,'🌳'],[/leaf/,'🍃'],
+    [/butterfly/,'🦋'],[/bee/,'🐝'],[/bug/,'🐛'],[/duck/,'🦆'],[/fish/,'🐠'],
+    [/dog/,'🐶'],[/cat/,'🐱'],[/bird/,'🐦'],[/frog/,'🐸'],[/heart/,'❤️'],
+    [/circle/,'🔵'],[/square|box/,'🟦'],[/triangle/,'🔺'],[/book/,'📚'],
+    [/rocket|space/,'🚀'],[/planet/,'🪐'],[/rain|cloud/,'🌧️'],[/snow/,'❄️'],
+    [/fire/,'🔥'],[/water/,'💧']];
+  for(const [re,em] of map) if(re.test(t)) return em;
+  return '⭐';
 }
 
-// Smart emoji matching — picks emoji based on slide text keywords
-function getSlideEmoji(slide) {
-  const text = (slide.heading + ' ' + slide.body + ' ' + (slide.bullets||[]).join(' ')).toLowerCase();
-  const map = [
-    [/star/,          '⭐'], [/sun/,           '☀️'], [/moon/,          '🌙'],
-    [/apple/,         '🍎'], [/orange/,        '🍊'], [/banana/,        '🍌'],
-    [/cookie/,        '🍪'], [/cake/,          '🎂'], [/candy|lollipop/,'🍭'],
-    [/balloon/,       '🎈'], [/ball/,          '⚽'], [/block/,         '🧱'],
-    [/flower/,        '🌸'], [/tree/,          '🌳'], [/leaf/,          '🍃'],
-    [/butterfly/,     '🦋'], [/bee/,           '🐝'], [/bug|insect/,    '🐛'],
-    [/duck/,          '🦆'], [/fish/,          '🐠'], [/dog/,           '🐶'],
-    [/cat/,           '🐱'], [/bird/,          '🐦'], [/frog/,          '🐸'],
-    [/heart/,         '❤️'], [/diamond/,       '💎'], [/circle/,        '🔵'],
-    [/square|box/,    '🟦'], [/triangle/,      '🔺'], [/shape/,         '🔷'],
-    [/pencil|draw/,   '✏️'], [/book/,          '📚'], [/number|count/,  '🔢'],
-    [/rocket|space/,  '🚀'], [/planet/,        '🪐'], [/rain|cloud/,    '🌧️'],
-    [/snow/,          '❄️'], [/fire/,          '🔥'], [/water/,         '💧'],
-  ];
-  for (const [regex, emoji] of map) {
-    if (regex.test(text)) return emoji;
-  }
-  return '⭐'; // default
+function isCountSlide(slide){
+  if(!slide.bullets||slide.bullets.length<3) return false;
+  return slide.bullets.every(b=>/^\d+/.test(b.trim())||
+    /^(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty)/i.test(b.trim()));
 }
 
-function buildSlideHTML(slide) {
-  if (isCountingSlide(slide) && slide.bullets && slide.bullets.length > 0) {
-    const emoji = getSlideEmoji(slide);
-    const items = slide.bullets.map((b, i) =>
-      `<div class="count-item" data-index="${i}">
-        <div class="count-emoji">${emoji}</div>
-        <div class="count-number">${i + 1}</div>
+function buildSlideHTML(slide){
+  if(isCountSlide(slide)){
+    const em = getEmoji(slide);
+    const items = slide.bullets.map((b,i)=>
+      `<div class="count-item" data-i="${i}">
+        <div class="count-emoji">${em}</div>
+        <div class="count-num">${i+1}</div>
         <div class="count-word">${b}</div>
-      </div>`
-    ).join('');
-    return `<div class="slide-topic-label">${slide.tag}</div>
-      <h2 class="slide-heading">${slide.heading}</h2>
-      <p class="slide-body" style="margin-bottom:4px;">${slide.body}</p>
+      </div>`).join('');
+    return `<div class="slide-tag">${slide.tag}</div>
+      <h2 class="slide-h">${slide.heading}</h2>
+      <p class="slide-body" style="margin-bottom:6px;">${slide.body}</p>
       <div class="count-display">${items}</div>`;
   }
-  const bullets = (slide.bullets && slide.bullets.length > 0)
-    ? `<ul class="slide-bullets">${slide.bullets.map((b,i) =>
-        `<li><div class="bullet-num">${i+1}</div><span>${b}</span></li>`).join('')}</ul>` : '';
-  return `<div class="slide-topic-label">${slide.tag}</div>
-    <h2 class="slide-heading">${slide.heading}</h2>
+  const bullets = slide.bullets&&slide.bullets.length
+    ? `<ul class="slide-bullets">${slide.bullets.map((b,i)=>
+        `<li><div class="bnum">${i+1}</div><span>${b}</span></li>`).join('')}</ul>` : '';
+  return `<div class="slide-tag">${slide.tag}</div>
+    <h2 class="slide-h">${slide.heading}</h2>
     <div class="slide-body">${slide.body}${bullets}</div>`;
 }
 
-function showSlide(index) {
+function renderSlide(idx){
   const inner = document.getElementById('slideInner');
-  inner.classList.remove('visible');
+  inner.classList.remove('vis');
   const total = slides.length;
-  document.getElementById('slideCounter').textContent = `Slide ${index + 1} of ${total}`;
-  document.getElementById('videoProgressFill').style.width = `${((index + 1) / total) * 100}%`;
-  document.getElementById('prevBtn').disabled = index === 0;
-  document.getElementById('nextBtn').disabled = index === total - 1;
-  setTimeout(() => {
-    inner.innerHTML = buildSlideHTML(slides[index]);
-    inner.classList.add('visible');
-    const countItems = inner.querySelectorAll('.count-item');
-    if (countItems.length > 0) {
-      // Pop in one at a time
-      countItems.forEach((item, i) =>
-        setTimeout(() => item.classList.add('pop'), 200 + i * 380));
-    } else {
-      inner.querySelectorAll('.slide-bullets li').forEach((li, i) =>
-        setTimeout(() => li.classList.add('show'), 600 + i * 220));
-    }
-  }, 260);
+  document.getElementById('slideCtr').textContent = `Slide ${idx+1} of ${total}`;
+  document.getElementById('progressFill').style.width = `${((idx+1)/total)*100}%`;
+  document.getElementById('prevBtn').disabled = idx===0;
+  document.getElementById('nextBtn').disabled = idx===total-1;
+  document.getElementById('timerPill').textContent = `${slideDurs[idx]||defaultDur}s`;
+  setTimeout(()=>{
+    inner.innerHTML = buildSlideHTML(slides[idx]);
+    inner.classList.add('vis');
+    const ci = inner.querySelectorAll('.count-item');
+    if(ci.length) ci.forEach((el,i)=>setTimeout(()=>el.classList.add('pop'),200+i*360));
+    else inner.querySelectorAll('.slide-bullets li').forEach((li,i)=>
+      setTimeout(()=>li.classList.add('show'),500+i*200));
+  },240);
 }
 
-// Winner sound using Web Audio API — no external files needed
-function playWinnerSound() {
-  try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const notes = [523, 659, 784, 1047]; // C E G C — happy chord
-    notes.forEach((freq, i) => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.type = 'sine';
-      osc.frequency.value = freq;
-      const start = ctx.currentTime + i * 0.15;
-      gain.gain.setValueAtTime(0, start);
-      gain.gain.linearRampToValueAtTime(0.4, start + 0.05);
-      gain.gain.exponentialRampToValueAtTime(0.001, start + 0.6);
-      osc.start(start); osc.stop(start + 0.6);
-    });
-    // Bonus sparkle trill
-    [1047, 1319, 1568].forEach((freq, i) => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.type = 'triangle';
-      osc.frequency.value = freq;
-      const start = ctx.currentTime + 0.6 + i * 0.12;
-      gain.gain.setValueAtTime(0.3, start);
-      gain.gain.exponentialRampToValueAtTime(0.001, start + 0.4);
-      osc.start(start); osc.stop(start + 0.4);
-    });
-  } catch(e) { console.warn('Audio ctx error:', e); }
-}
-
-// Confetti burst
-function launchConfetti() {
-  const frame = document.getElementById('videoFrame');
-  if (!frame) return;
-  const colors = ['#F5A623','#4A7C59','#3B82C4','#C0392B','#6B3FA0','#fff','#FDF8F0'];
-  for (let i = 0; i < 60; i++) {
-    const piece = document.createElement('div');
-    piece.className = 'confetti-piece';
-    piece.style.cssText = `
-      left:${Math.random()*100}%;
-      top:0;
-      background:${colors[Math.floor(Math.random()*colors.length)]};
-      width:${6+Math.random()*8}px;
-      height:${6+Math.random()*8}px;
-      border-radius:${Math.random()>0.5?'50%':'2px'};
-      animation-duration:${1.2+Math.random()*1.8}s;
-      animation-delay:${Math.random()*0.5}s;
-    `;
-    frame.appendChild(piece);
-    setTimeout(() => piece.remove(), 3000);
-  }
-}
-
-function showEndSlide() {
+function showEnd(){
   const inner = document.getElementById('slideInner');
-  inner.classList.remove('visible');
-  setTimeout(() => {
-    inner.innerHTML = `<div class="end-slide">
-      <div class="end-icon">🏆</div>
-      <h2>You Did It!</h2>
-      <p>Amazing work! Lesson complete — screen-record and share it!</p>
-      <button class="end-replay" onclick="goToSlide(0)">↩ Replay Lesson</button>
-    </div>`;
-    inner.classList.add('visible');
-    playWinnerSound();
-    launchConfetti();
-  }, 260);
-  document.getElementById('videoProgressFill').style.width = '100%';
-  document.getElementById('slideCounter').textContent = 'Complete!';
-  document.getElementById('timerDisplay').textContent = '—';
+  inner.classList.remove('vis');
+  setTimeout(()=>{
+    inner.innerHTML=`<div class="end-slide"><div class="end-icon">🏆</div>
+      <h2>You Did It!</h2><p>Amazing work! Lesson complete.</p>
+      <button class="btn-end-replay" id="replayBtn">↩ Replay</button></div>`;
+    inner.classList.add('vis');
+    document.getElementById('replayBtn').addEventListener('click',doRestartVideo);
+    doWinnerSound(); doConfetti();
+  },240);
+  document.getElementById('progressFill').style.width='100%';
+  document.getElementById('slideCtr').textContent='Complete!';
+  document.getElementById('timerPill').textContent='—';
 }
 
-function goToSlide(i) { currentSlide = i; showSlide(i); resetTimer(); if (isPlaying) startTimer(); }
-
-function drawThumbnail() {
-  const canvas = document.getElementById('thumbnailCanvas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const W = 1280, H = 672;
-  canvas.width = W; canvas.height = H;
-
-  const subject = document.getElementById('subject').value;
-  const color = SUBJECT_COLORS[subject] || '#3B82C4';
-  const ageGroup = document.getElementById('ageGroup').value;
-  const lessonTitle = slides[0] ? slides[0].heading : 'Lesson';
-
-  // Background
-  ctx.fillStyle = color;
-  ctx.fillRect(0, 0, W, H);
-
-  // Radial highlight top-left
-  const grad = ctx.createRadialGradient(200, 150, 0, 200, 150, 500);
-  grad.addColorStop(0, 'rgba(255,255,255,0.12)');
-  grad.addColorStop(1, 'rgba(0,0,0,0)');
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, W, H);
-
-  // Dark overlay bottom
-  const grad2 = ctx.createLinearGradient(0, H * 0.5, 0, H);
-  grad2.addColorStop(0, 'rgba(0,0,0,0)');
-  grad2.addColorStop(1, 'rgba(0,0,0,0.35)');
-  ctx.fillStyle = grad2;
-  ctx.fillRect(0, 0, W, H);
-
-  // Age badge — top left
-  ctx.fillStyle = 'rgba(0,0,0,0.25)';
-  roundRect(ctx, 48, 44, 200, 44, 8);
-  ctx.fill();
-  ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 20px Helvetica, Arial, sans-serif';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(ageGroup.toUpperCase(), 68, 66);
-
-  // Subject badge — top right
-  ctx.fillStyle = '#F5A623';
-  roundRect(ctx, W - 248, 44, 200, 44, 8);
-  ctx.fill();
-  ctx.fillStyle = '#2C1A0E';
-  ctx.font = 'bold 20px Helvetica, Arial, sans-serif';
-  ctx.textAlign = 'center';
-  ctx.fillText(subject.toUpperCase(), W - 148, 66);
-
-  // Main title — center
-  ctx.textAlign = 'center';
-  ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 82px Helvetica, Arial, sans-serif';
-  ctx.textBaseline = 'middle';
-  const title = lessonTitle.length > 36 ? lessonTitle.substring(0, 34) + '…' : lessonTitle;
-  wrapText(ctx, title, W / 2, H / 2 - 40, W - 160, 96);
-
-  // Channel name — bottom center
-  ctx.font = 'bold 28px Helvetica, Arial, sans-serif';
-  ctx.fillStyle = 'rgba(255,255,255,0.75)';
-  ctx.textAlign = 'center';
-  ctx.fillText('Homeschool Tools 4 U', W / 2, H - 52);
-
-  // Sunlight logo box bottom left
-  ctx.fillStyle = '#F5A623';
-  roundRect(ctx, 48, H - 80, 52, 52, 8);
-  ctx.fill();
-  ctx.fillStyle = '#2C1A0E';
-  ctx.font = 'bold 28px Helvetica, Arial, sans-serif';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText('H', 74, H - 54);
+// ══════════════════════════════════════
+// PLAYBACK — AUDIO-DRIVEN
+// ══════════════════════════════════════
+function doStartPlay(){
+  isPlaying=true;
+  document.getElementById('playBtn').textContent='⏸ Pause';
+  doAdvance(currentSlide);
 }
 
-function roundRect(ctx, x, y, w, h, r) {
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.lineTo(x + w - r, y);
-  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-  ctx.lineTo(x + w, y + h - r);
-  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-  ctx.lineTo(x + r, y + h);
-  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-  ctx.lineTo(x, y + r);
-  ctx.quadraticCurveTo(x, y, x + r, y);
-  ctx.closePath();
-}
-
-function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
-  const words = text.split(' ');
-  let line = '';
-  let lines = [];
-  for (let n = 0; n < words.length; n++) {
-    const testLine = line + words[n] + ' ';
-    if (ctx.measureText(testLine).width > maxWidth && n > 0) {
-      lines.push(line.trim());
-      line = words[n] + ' ';
-    } else { line = testLine; }
+function doTogglePlay(){
+  if(isPlaying){
+    isPlaying=false; clearTimeout(playTimer); stopAudio();
+    document.getElementById('playBtn').textContent='▶ Play';
+  } else {
+    isPlaying=true;
+    document.getElementById('playBtn').textContent='⏸ Pause';
+    doAdvance(currentSlide);
   }
-  lines.push(line.trim());
-  const startY = y - ((lines.length - 1) * lineHeight) / 2;
-  lines.forEach((l, i) => ctx.fillText(l, x, startY + i * lineHeight));
 }
 
-function downloadThumbnail() {
-  drawThumbnail();
-  const canvas = document.getElementById('thumbnailCanvas');
-  const subject = document.getElementById('subject').value;
-  const topic = (slides[0]?.heading || 'lesson').replace(/[^a-z0-9]/gi, '_').toLowerCase();
-  const link = document.createElement('a');
-  link.download = `HT4U_${subject}_${topic}_thumbnail.png`;
-  link.href = canvas.toDataURL('image/png');
-  link.click();
-}
-
-// ── OPENAI TTS — FIXED FOR SAFARI/IPAD ──
-let voiceMuted = false;
-let currentAudio = null;
-let audioQueue = [];
-let isProcessingAudio = false;
-let sharedAudioEl = null; // single reused Audio element — fixes Safari blocking
-
-function getAudioEl() {
-  if (!sharedAudioEl) {
-    sharedAudioEl = new Audio();
-    sharedAudioEl.preload = 'auto';
+function doAdvance(idx){
+  clearTimeout(playTimer);
+  if(!isPlaying) return;
+  const dur = (slideDurs[idx]||defaultDur)*1000;
+  if(oaiKey&&!voiceMuted){
+    speakAndAdvance(slides[idx], ()=>{
+      if(!isPlaying) return;
+      if(idx<slides.length-1){ currentSlide++; renderSlide(currentSlide); doAdvance(currentSlide); }
+      else { isPlaying=false; document.getElementById('playBtn').textContent='▶ Play'; showEnd(); speakText('You did it! Lesson complete. Great job!'); }
+    });
+  } else {
+    playTimer=setTimeout(()=>{
+      if(!isPlaying) return;
+      if(idx<slides.length-1){ currentSlide++; renderSlide(currentSlide); doAdvance(currentSlide); }
+      else { isPlaying=false; document.getElementById('playBtn').textContent='▶ Play'; showEnd(); }
+    }, dur);
   }
-  return sharedAudioEl;
 }
 
-function updateSpeedLabel(val) {
-  document.getElementById('voiceSpeedVal').textContent = parseFloat(val).toFixed(2) + '×';
+function goPrev(){
+  clearTimeout(playTimer); stopAudio();
+  if(currentSlide>0){ currentSlide--; renderSlide(currentSlide); if(isPlaying) doAdvance(currentSlide); }
+}
+function goNext(){
+  clearTimeout(playTimer); stopAudio();
+  if(currentSlide<slides.length-1){ currentSlide++; renderSlide(currentSlide); if(isPlaying) doAdvance(currentSlide); }
+}
+function doRestartVideo(){
+  clearTimeout(playTimer); stopAudio();
+  currentSlide=0; renderSlide(0); isPlaying=true;
+  document.getElementById('playBtn').textContent='⏸ Pause';
+  doAdvance(0);
+}
+function doNewLesson(){
+  clearTimeout(playTimer); stopAudio(); isPlaying=false; slides=[]; slideDurs=[]; currentSlide=0;
+  show('s-setup');
 }
 
-function toggleMute() {
-  voiceMuted = !voiceMuted;
-  const btn = document.getElementById('muteBtn');
-  btn.textContent = voiceMuted ? '🔇 OFF' : '🔊 ON';
-  btn.classList.toggle('muted', voiceMuted);
-  if (voiceMuted) stopAudio();
+// ══════════════════════════════════════
+// VOICE — OPENAI TTS
+// ══════════════════════════════════════
+function getAudioEl(){
+  if(!sharedAudio){ sharedAudio=new Audio(); sharedAudio.preload='auto'; }
+  return sharedAudio;
 }
-
-function stopAudio() {
-  if (sharedAudioEl) {
-    sharedAudioEl.pause();
-    sharedAudioEl.src = '';
-  }
-  currentAudio = null;
-  audioQueue = [];
-  isProcessingAudio = false;
+function stopAudio(){
+  if(sharedAudio){ sharedAudio.pause(); sharedAudio.src=''; sharedAudio.onended=null; }
   setVoiceStatus('');
 }
-
-function setVoiceStatus(msg, color) {
-  const el = document.getElementById('voiceStatus');
-  if (el) { el.textContent = msg; el.style.color = color || '#3d6b4f'; }
+function setVoiceStatus(msg,col){
+  const el=document.getElementById('voiceStatus');
+  el.textContent=msg; el.style.color=col||'#3d6b4f';
 }
 
-async function fetchTTS(text) {
-  if (!elevenLabsKey) throw new Error('No OpenAI key — add it via Change API Keys.');
-  const voice = document.getElementById('voiceSelect').value;
-  const speed = parseFloat(document.getElementById('voiceSpeed').value);
-  const res = await fetch('https://api.openai.com/v1/audio/speech', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${elevenLabsKey}`
-    },
-    body: JSON.stringify({
-      model: 'tts-1',
-      input: text,
-      voice: voice,
-      speed: speed,
-      response_format: 'mp3'
-    })
+async function fetchTTS(text){
+  if(!oaiKey) throw new Error('No OpenAI key.');
+  const voice=document.getElementById('voiceSel').value;
+  const speed=parseFloat(document.getElementById('voiceSpeed').value);
+  const res=await fetch('https://api.openai.com/v1/audio/speech',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':`Bearer ${oaiKey}`},
+    body:JSON.stringify({model:'tts-1',input:text,voice,speed,response_format:'mp3'})
   });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err?.error?.message || `OpenAI TTS error ${res.status}`);
-  }
-  const blob = await res.blob();
-  return URL.createObjectURL(blob);
+  if(!res.ok){ const e=await res.json().catch(()=>({})); throw new Error(e?.error?.message||`TTS ${res.status}`); }
+  return URL.createObjectURL(await res.blob());
 }
 
-function buildNarration(slide) {
-  let text = slide.heading + '. ';
-  if (slide.body) {
-    const tmp = document.createElement('div');
-    tmp.innerHTML = slide.body;
-    const bodyText = (tmp.textContent || tmp.innerText || '').trim();
-    if (bodyText) text += bodyText + ' ';
-  }
-  if (slide.bullets && slide.bullets.length) {
-    text += slide.bullets.join('. ') + '.';
-  }
-  return text;
+function buildNarration(slide){
+  let t=slide.heading+'. ';
+  if(slide.body){ const d=document.createElement('div'); d.innerHTML=slide.body; t+=(d.textContent||'').trim()+' '; }
+  if(slide.bullets&&slide.bullets.length) t+=slide.bullets.join('. ')+'.';
+  return t;
 }
 
-async function speakSlide(slide) {
-  return speakSlideAndAdvance(slide, null);
-}
-
-async function speakSlideAndAdvance(slide, onDone) {
-  if (voiceMuted || !elevenLabsKey) { if (onDone) onDone(); return; }
+async function speakAndAdvance(slide, onDone){
+  if(voiceMuted||!oaiKey){ if(onDone) onDone(); return; }
   stopAudio();
-  setVoiceStatus('🎙️ Loading…', '#3d6b4f');
-  try {
-    const text = buildNarration(slide);
-    const url = await fetchTTS(text);
-    if (voiceMuted) { URL.revokeObjectURL(url); setVoiceStatus(''); if (onDone) onDone(); return; }
-
-    const audio = getAudioEl();
-    audio.src = url;
-    audio.onended = () => {
-      URL.revokeObjectURL(url);
-      setVoiceStatus('');
-      if (onDone) setTimeout(onDone, 400); // small natural pause between slides
-    };
-    audio.onerror = () => {
-      URL.revokeObjectURL(url);
-      setVoiceStatus('');
-      if (onDone) onDone();
-    };
-    const playPromise = audio.play();
-    if (playPromise !== undefined) {
-      playPromise
-        .then(() => setVoiceStatus('🎙️ Speaking…', '#3d6b4f'))
-        .catch(e => {
-          setVoiceStatus('⚠️ Tap Preview once to unlock audio', '#c0392b');
-          setTimeout(() => setVoiceStatus(''), 5000);
-          if (onDone) onDone(); // fall through so lesson still advances
-        });
-    }
-  } catch(e) {
-    console.warn('TTS error:', e.message);
-    setVoiceStatus('⚠️ ' + e.message, '#c0392b');
-    setTimeout(() => setVoiceStatus(''), 5000);
-    if (onDone) onDone(); // fall through on error
-  }
+  setVoiceStatus('🎙️ Loading…','#3d6b4f');
+  try{
+    const url=await fetchTTS(buildNarration(slide));
+    if(voiceMuted){ URL.revokeObjectURL(url); if(onDone) onDone(); return; }
+    const a=getAudioEl(); a.src=url;
+    a.onended=()=>{ URL.revokeObjectURL(url); setVoiceStatus(''); if(onDone) setTimeout(onDone,350); };
+    a.onerror=()=>{ URL.revokeObjectURL(url); setVoiceStatus(''); if(onDone) onDone(); };
+    const p=a.play();
+    if(p) p.then(()=>setVoiceStatus('🎙️ Speaking…','#3d6b4f'))
+            .catch(e=>{ setVoiceStatus('⚠️ Tap Preview to unlock audio','#c0392b'); setTimeout(()=>setVoiceStatus(''),5000); if(onDone) onDone(); });
+  }catch(e){ setVoiceStatus('⚠️ '+e.message,'#c0392b'); setTimeout(()=>setVoiceStatus(''),5000); if(onDone) onDone(); }
 }
 
-async function previewVoice() {
-  if (!elevenLabsKey) { alert('Please add your OpenAI API key first — tap "Change API Keys" below.'); return; }
-  stopAudio();
-  setVoiceStatus('🎙️ Loading preview…', '#3d6b4f');
-  const voiceName = document.getElementById('voiceSelect').selectedOptions[0]?.text?.split('—')[0]?.trim() || 'this voice';
-  try {
-    const url = await fetchTTS(`Hi! I'm ${voiceName}. Ready to teach your lesson!`);
-    const audio = getAudioEl();
-    audio.src = url;
-    audio.onended = () => {
-      URL.revokeObjectURL(url);
-      setVoiceStatus('✅ Audio unlocked — hit Play!', '#3d6b4f');
-      setTimeout(() => setVoiceStatus(''), 4000);
-    };
-    audio.onerror = () => { URL.revokeObjectURL(url); setVoiceStatus(''); };
-    await audio.play(); // This user-gesture-triggered play unlocks Safari
-  } catch(e) {
-    setVoiceStatus('⚠️ ' + e.message, '#c0392b');
-    setTimeout(() => setVoiceStatus(''), 5000);
-  }
+async function speakText(text){
+  if(voiceMuted||!oaiKey) return;
+  try{ const url=await fetchTTS(text); const a=getAudioEl(); a.src=url; a.onended=()=>URL.revokeObjectURL(url); a.play().catch(()=>{}); }catch(e){}
 }
 
-// Per-slide durations (fallback when no audio key)
-let slideDurations = []; // populated when lesson loads
-
-function getSlideDuration(index) {
-  return (slideDurations[index] && slideDurations[index] > 0)
-    ? slideDurations[index] : slideDuration;
+async function doPreviewVoice(){
+  if(!oaiKey){ alert('Add your OpenAI key via Change API Keys.'); return; }
+  stopAudio(); setVoiceStatus('🎙️ Loading…','#3d6b4f');
+  const name=document.getElementById('voiceSel').selectedOptions[0]?.text?.split('—')[0]?.trim()||'Nova';
+  try{
+    const url=await fetchTTS(`Hi! I'm ${name}. Ready to teach your lesson!`);
+    const a=getAudioEl(); a.src=url;
+    a.onended=()=>{ URL.revokeObjectURL(url); setVoiceStatus('✅ Audio ready — hit Play!','#3d6b4f'); setTimeout(()=>setVoiceStatus(''),4000); };
+    a.onerror=()=>{ URL.revokeObjectURL(url); setVoiceStatus(''); };
+    await a.play();
+  }catch(e){ setVoiceStatus('⚠️ '+e.message,'#c0392b'); setTimeout(()=>setVoiceStatus(''),5000); }
 }
 
-function startPlay() {
-  isPlaying = true;
-  document.getElementById('playBtn').textContent = '⏸ Pause';
-  advanceWithAudio(currentSlide);
+function doToggleMute(){
+  voiceMuted=!voiceMuted;
+  const b=document.getElementById('muteBtn');
+  b.textContent=voiceMuted?'🔇 OFF':'🔊 ON';
+  b.style.background=voiceMuted?'var(--bark)':'';
+  b.style.color=voiceMuted?'#fff':'';
+  if(voiceMuted) stopAudio();
 }
 
-function togglePlay() {
-  if (isPlaying) {
-    isPlaying = false; clearInterval(timer); stopAudio();
-    document.getElementById('playBtn').textContent = '▶ Play';
-    setVoiceStatus('');
-  } else {
-    isPlaying = true;
-    document.getElementById('playBtn').textContent = '⏸ Pause';
-    advanceWithAudio(currentSlide);
-  }
-}
-
-// Core: speak slide, then wait for audio to finish (or fallback timer), then advance
-function advanceWithAudio(index) {
-  clearInterval(timer);
-  if (!isPlaying) return;
-
-  const dur = getSlideDuration(index);
-  timeLeft = dur; updateTimerDisplay();
-
-  if (elevenLabsKey && !voiceMuted) {
-    // Audio-driven: advance only after speech ends
-    speakSlideAndAdvance(slides[index], () => {
-      if (!isPlaying) return;
-      if (index < slides.length - 1) {
-        currentSlide++; showSlide(currentSlide);
-        advanceWithAudio(currentSlide);
-      } else {
-        isPlaying = false;
-        document.getElementById('playBtn').textContent = '▶ Play';
-        showEndSlide();
-        speakSlide({ heading: 'You did it! Lesson complete. Great job!', body: '', bullets: [] });
-      }
+// ══════════════════════════════════════
+// WINNER SOUND + CONFETTI
+// ══════════════════════════════════════
+function doWinnerSound(){
+  try{
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    [[523,0],[659,.15],[784,.3],[1047,.45],[1319,.65],[1568,.8]].forEach(([f,t])=>{
+      const o=ctx.createOscillator(),g=ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.type=t>.5?'triangle':'sine'; o.frequency.value=f;
+      const s=ctx.currentTime+t;
+      g.gain.setValueAtTime(0,s); g.gain.linearRampToValueAtTime(.35,s+.05);
+      g.gain.exponentialRampToValueAtTime(.001,s+.55);
+      o.start(s); o.stop(s+.55);
     });
-  } else {
-    // No audio key — use countdown timer
-    startFallbackTimer(index, dur);
+  }catch(e){}
+}
+function doConfetti(){
+  const frame=document.getElementById('videoFrame');
+  if(!frame) return;
+  const cols=['#F5A623','#4A7C59','#3B82C4','#C0392B','#6B3FA0','#fff','#FDF8F0'];
+  for(let i=0;i<55;i++){
+    const p=document.createElement('div'); p.className='confetti-piece';
+    p.style.cssText=`left:${Math.random()*100}%;top:0;background:${cols[i%cols.length]};
+      width:${6+Math.random()*7}px;height:${6+Math.random()*7}px;
+      border-radius:${Math.random()>.5?'50%':'2px'};
+      animation-duration:${1.2+Math.random()*1.8}s;animation-delay:${Math.random()*.5}s;`;
+    frame.appendChild(p); setTimeout(()=>p.remove(),3000);
   }
 }
 
-function startFallbackTimer(index, dur) {
-  timeLeft = dur; updateTimerDisplay();
-  timer = setInterval(() => {
-    timeLeft--; updateTimerDisplay();
-    if (timeLeft <= 0) {
-      clearInterval(timer);
-      if (!isPlaying) return;
-      if (index < slides.length - 1) {
-        currentSlide++; showSlide(currentSlide);
-        advanceWithAudio(currentSlide);
-      } else {
-        isPlaying = false;
-        document.getElementById('playBtn').textContent = '▶ Play';
-        showEndSlide();
-      }
-    }
-  }, 1000);
+// ══════════════════════════════════════
+// THUMBNAIL
+// ══════════════════════════════════════
+function drawThumbnail(){
+  const canvas=document.getElementById('thumbCanvas');
+  if(!canvas) return;
+  const ctx=canvas.getContext('2d'); const W=1280,H=672;
+  canvas.width=W; canvas.height=H;
+  const subj=document.getElementById('subjectSel').value;
+  const color=SUBJ_COLORS[subj]||'#3B82C4';
+  const age=document.getElementById('ageSel').value;
+  const title=slides[0]?slides[0].heading:'Lesson';
+  ctx.fillStyle=color; ctx.fillRect(0,0,W,H);
+  const g=ctx.createRadialGradient(200,150,0,200,150,500);
+  g.addColorStop(0,'rgba(255,255,255,.12)'); g.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+  const g2=ctx.createLinearGradient(0,H*.5,0,H);
+  g2.addColorStop(0,'rgba(0,0,0,0)'); g2.addColorStop(1,'rgba(0,0,0,.35)');
+  ctx.fillStyle=g2; ctx.fillRect(0,0,W,H);
+  // Age badge
+  ctx.fillStyle='rgba(0,0,0,.25)'; rr(ctx,48,44,220,44,8); ctx.fill();
+  ctx.fillStyle='#fff'; ctx.font='bold 20px Helvetica,Arial,sans-serif';
+  ctx.textBaseline='middle'; ctx.textAlign='left'; ctx.fillText(age.toUpperCase(),66,66);
+  // Subject badge
+  ctx.fillStyle='#F5A623'; rr(ctx,W-228,44,180,44,8); ctx.fill();
+  ctx.fillStyle='#2C1A0E'; ctx.textAlign='center';
+  ctx.fillText(subj.toUpperCase(),W-138,66);
+  // Title
+  ctx.fillStyle='#fff'; ctx.font='bold 78px Helvetica,Arial,sans-serif';
+  ctx.textBaseline='middle'; ctx.textAlign='center';
+  wt(ctx,title.length>38?title.substring(0,36)+'…':title,W/2,H/2-30,W-160,92);
+  // Channel
+  ctx.font='bold 26px Helvetica,Arial,sans-serif';
+  ctx.fillStyle='rgba(255,255,255,.75)'; ctx.fillText('Homeschool Tools 4 U',W/2,H-50);
+  // Logo
+  ctx.fillStyle='#F5A623'; rr(ctx,48,H-78,50,50,8); ctx.fill();
+  ctx.fillStyle='#2C1A0E'; ctx.font='bold 26px Helvetica,Arial,sans-serif';
+  ctx.textBaseline='middle'; ctx.fillText('H',73,H-53);
+}
+function rr(ctx,x,y,w,h,r){
+  ctx.beginPath(); ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y);
+  ctx.quadraticCurveTo(x+w,y,x+w,y+r); ctx.lineTo(x+w,y+h-r);
+  ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h); ctx.lineTo(x+r,y+h);
+  ctx.quadraticCurveTo(x,y+h,x,y+h-r); ctx.lineTo(x,y+r);
+  ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+}
+function wt(ctx,text,x,y,mw,lh){
+  const words=text.split(' '); let line='',lines=[];
+  words.forEach(w=>{ const tl=line+w+' ';
+    if(ctx.measureText(tl).width>mw&&line){ lines.push(line.trim()); line=w+' '; }
+    else line=tl; });
+  lines.push(line.trim());
+  const sy=y-((lines.length-1)*lh)/2;
+  lines.forEach((l,i)=>ctx.fillText(l,x,sy+i*lh));
+}
+function doDownloadThumb(){
+  drawThumbnail();
+  const canvas=document.getElementById('thumbCanvas');
+  const subj=document.getElementById('subjectSel').value;
+  const t=(slides[0]?.heading||'lesson').replace(/[^a-z0-9]/gi,'_').toLowerCase();
+  const a=document.createElement('a');
+  a.download=`HT4U_${subj}_${t}.png`; a.href=canvas.toDataURL('image/png'); a.click();
 }
 
-function resetTimer() { timeLeft = slideDuration; updateTimerDisplay(); }
-function updateTimerDisplay() {
-  document.getElementById('timerDisplay').textContent = `${timeLeft}s`;
+// ══════════════════════════════════════
+// SCRIPT EDITOR
+// ══════════════════════════════════════
+function doToggleScript(){
+  const c=document.getElementById('scriptContent');
+  const t=document.getElementById('scriptToggle');
+  const ch=document.getElementById('scriptChev');
+  const open=c.classList.contains('open');
+  c.classList.toggle('open',!open);
+  t.classList.toggle('open',!open);
+  ch.classList.toggle('open',!open);
+  if(!open) renderScriptEditor();
 }
-
-function prevSlide() {
-  clearInterval(timer); stopAudio();
-  if (currentSlide > 0) {
-    currentSlide--; showSlide(currentSlide);
-    if (isPlaying) advanceWithAudio(currentSlide);
-  }
-}
-function nextSlide() {
-  clearInterval(timer); stopAudio();
-  if (currentSlide < slides.length - 1) {
-    currentSlide++; showSlide(currentSlide);
-    if (isPlaying) advanceWithAudio(currentSlide);
-  }
-}
-
-function restartVideo() {
-  stopAudio(); clearInterval(timer);
-  currentSlide = 0; showSlide(0);
-  isPlaying = true;
-  document.getElementById('playBtn').textContent = '⏸ Pause';
-  advanceWithAudio(0);
-}
-
-function restartLesson() {
-  clearInterval(timer); stopAudio(); setVoiceStatus('');
-  isPlaying = false; slides = []; currentSlide = 0; slideDurations = [];
-  document.getElementById('player').style.display = 'none';
-  document.getElementById('setup').style.display = 'block';
-  document.getElementById('generateBtn').disabled = false;
-  renderTopics();
-}
-
-// ── SCRIPT EDITOR ──
-function toggleScriptEditor() {
-  const body = document.getElementById('scriptBody');
-  const header = document.getElementById('scriptHeader');
-  const chevron = document.getElementById('scriptChevron');
-  const isOpen = body.classList.contains('open');
-  body.classList.toggle('open', !isOpen);
-  header.classList.toggle('open', !isOpen);
-  chevron.classList.toggle('open', !isOpen);
-  if (!isOpen) renderScriptEditor();
-}
-
-function renderScriptEditor() {
-  const container = document.getElementById('scriptCards');
-  if (!slides.length) { container.innerHTML = '<p style="color:#9a8878;font-size:13px;">Generate a lesson first.</p>'; return; }
-  container.innerHTML = slides.map((slide, i) => `
-    <div class="script-card" id="scriptCard${i}">
-      <div class="script-card-num">Slide ${i+1} of ${slides.length} — ${slide.tag}</div>
-      <span class="script-lbl">Heading</span>
-      <input class="script-inp" id="sh${i}" value="${escHtml(slide.heading)}" />
-      <span class="script-lbl">Body Text</span>
-      <textarea class="script-inp" id="sb${i}" rows="2">${escHtml(slide.body)}</textarea>
+function renderScriptEditor(){
+  const el=document.getElementById('scriptCards');
+  if(!slides.length){ el.innerHTML='<p style="color:#9a8878;font-size:13px;">Generate a lesson first.</p>'; return; }
+  el.innerHTML=slides.map((s,i)=>`
+    <div class="script-card">
+      <div class="script-card-hdr">Slide ${i+1} — ${s.tag}</div>
+      <span class="sc-lbl">Heading</span>
+      <input class="sc-inp" id="sch${i}" value="${esc(s.heading)}"/>
+      <span class="sc-lbl">Body</span>
+      <textarea class="sc-inp" id="scb${i}" rows="2">${esc(s.body)}</textarea>
 
 ```
-  <span class="script-lbl">Bullets (one per line)</span>
-  <textarea class="script-inp" id="sbu${i}" rows="3">${(slide.bullets||[]).map(escHtml).join('\n')}</textarea>
-  <div class="script-card-footer">
-    <span class="script-dur-label">Duration (sec)</span>
-    <input class="script-dur-inp" id="sd${i}" type="number" min="3" max="120" value="${getSlideDuration(i)}" />
-    <button class="script-apply-btn" onclick="applySlideEdit(${i})">✓ Apply</button>
-    <button class="script-regen-btn" onclick="regenSlideAudio(${i})">🔈 Re-speak</button>
+  <span class="sc-lbl">Bullets (one per line)</span>
+  <textarea class="sc-inp" id="scbu${i}" rows="3">${(s.bullets||[]).map(esc).join('\n')}</textarea>
+  <div class="sc-footer">
+    <span class="sc-dur-lbl">Duration (sec)</span>
+    <input class="sc-dur" id="scd${i}" type="number" min="3" max="120" value="${slideDurs[i]||defaultDur}"/>
+    <button class="btn-sm btn-sun" onclick="applyEdit(${i})">✓ Apply</button>
+    <button class="btn-sm" onclick="regenAudio(${i})">🔈 Re-speak</button>
   </div>
 </div>`).join('');
 ```
 
 }
-
-function escHtml(s) {
-return (s||’’).replace(/&/g,’&’).replace(/</g,’<’).replace(/>/g,’>’).replace(/”/g,’"’);
+function esc(s){ return (s||’’).replace(/&/g,’&’).replace(/</g,’<’).replace(/>/g,’>’).replace(/”/g,’"’); }
+function applyEdit(i){
+slides[i].heading=document.getElementById(`sch${i}`).value.trim();
+slides[i].body=document.getElementById(`scb${i}`).value.trim();
+slides[i].bullets=document.getElementById(`scbu${i}`).value.split(’\n’).map(s=>s.trim()).filter(Boolean);
+slideDurs[i]=parseInt(document.getElementById(`scd${i}`).value)||defaultDur;
+if(currentSlide===i) renderSlide(i);
+setVoiceStatus(`✅ Slide ${i+1} updated`,’#3d6b4f’);
+setTimeout(()=>setVoiceStatus(’’),2500);
 }
-
-function applySlideEdit(i) {
-slides[i].heading = document.getElementById(`sh${i}`).value.trim();
-slides[i].body    = document.getElementById(`sb${i}`).value.trim();
-slides[i].bullets = document.getElementById(`sbu${i}`).value.split(’\n’).map(s=>s.trim()).filter(Boolean);
-const dur = parseInt(document.getElementById(`sd${i}`).value) || slideDuration;
-slideDurations[i] = dur;
-// Refresh slide if currently showing
-if (currentSlide === i) showSlide(i);
-setVoiceStatus(‘✅ Slide ’ + (i+1) + ’ updated’, ‘#3d6b4f’);
-setTimeout(() => setVoiceStatus(’’), 2500);
+async function regenAudio(i){
+applyEdit(i);
+if(!oaiKey){ alert(‘Add your OpenAI key to use voice.’); return; }
+stopAudio(); await speakText(buildNarration(slides[i]));
 }
-
-async function regenSlideAudio(i) {
-applySlideEdit(i); // save edits first
-if (!elevenLabsKey) { alert(‘Add your OpenAI key to use voice.’); return; }
-setVoiceStatus(’🎙️ Re-speaking slide ’ + (i+1) + ‘…’, ‘#3d6b4f’);
-stopAudio();
-await speakSlide(slides[i]);
-}
-
-window.onload = () => {
-// Attach model select listener
-const modelSel = document.getElementById(‘modelSelect’);
-if (modelSel) {
-modelSel.addEventListener(‘change’, function() {
-const cf = document.getElementById(‘customModelField’);
-if (cf) cf.style.display = this.value === ‘custom’ ? ‘block’ : ‘none’;
-});
-}
-
-// Restore saved keys
-let saved = ‘’, savedModel = ‘’, savedElKey = ‘’;
-try {
-saved       = localStorage.getItem(‘ht4u_apikey’) || ‘’;
-savedModel  = localStorage.getItem(‘ht4u_model’)  || ‘google/gemini-2.0-flash-001’;
-savedElKey  = localStorage.getItem(‘ht4u_elkey’)  || ‘’;
-} catch(e) {}
-
-if (saved) {
-apiKey        = saved;
-aiModel       = savedModel;
-elevenLabsKey = savedElKey;
-document.getElementById(‘apiScreen’).style.display = ‘none’;
-document.getElementById(‘setup’).style.display = ‘block’;
-renderTopics();
-}
-};
 </script>
 
 </body>
