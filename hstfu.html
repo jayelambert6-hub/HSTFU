@@ -366,6 +366,72 @@ display: flex; align-items: center; justify-content: center; gap: 8px;
 }
 .download-thumb-btn:hover { background: #4a3020; }
 
+/* SCRIPT EDITOR */
+.script-section {
+margin-top: 14px; background: #fff;
+border: 2px solid #e5ddd4; border-radius: 12px; overflow: hidden;
+}
+.script-header {
+display: flex; align-items: center; justify-content: space-between;
+padding: 14px 20px; cursor: pointer; user-select: none; background: #fff;
+border-bottom: 2px solid transparent; transition: background 0.2s;
+}
+.script-header:hover { background: #fdf5e8; }
+.script-header.open { border-bottom-color: #e5ddd4; }
+.script-header-title { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #6b5c4e; }
+.script-chevron { font-size: 12px; color: #9a8878; transition: transform 0.2s; display: inline-block; }
+.script-chevron.open { transform: rotate(180deg); }
+.script-body { display: none; padding: 16px 20px; }
+.script-body.open { display: block; }
+.script-card {
+border: 1.5px solid #e5ddd4; border-radius: 10px;
+padding: 14px 16px; margin-bottom: 12px; background: #fdfaf6;
+}
+.script-card:last-child { margin-bottom: 0; }
+.script-card-num {
+font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+text-transform: uppercase; color: #9a8878; margin-bottom: 8px;
+}
+.script-lbl {
+font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+text-transform: uppercase; color: #6b5c4e; margin: 10px 0 5px; display: block;
+}
+.script-lbl:first-of-type { margin-top: 0; }
+.script-inp {
+width: 100%; padding: 8px 10px; border: 1.5px solid #e5ddd4; border-radius: 7px;
+font-family: Helvetica, Arial, sans-serif; font-size: 13px;
+background: #fff; color: var(–bark); outline: none; resize: vertical;
+transition: border-color 0.2s;
+}
+.script-inp:focus { border-color: var(–sunlight); }
+.script-card-footer {
+display: flex; align-items: center; gap: 8px; margin-top: 12px; flex-wrap: wrap;
+}
+.script-dur-label {
+font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+text-transform: uppercase; color: #6b5c4e; white-space: nowrap;
+}
+.script-dur-inp {
+width: 65px; padding: 7px 10px; border: 1.5px solid #e5ddd4; border-radius: 7px;
+font-family: Helvetica, Arial, sans-serif; font-size: 13px; font-weight: 700;
+background: #fff; color: var(–bark); outline: none; text-align: center;
+}
+.script-dur-inp:focus { border-color: var(–sunlight); }
+.script-apply-btn {
+padding: 7px 14px; border-radius: 7px; border: none;
+background: var(–sunlight); color: var(–bark);
+font-family: Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 700;
+letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer; flex: 1;
+}
+.script-apply-btn:hover { background: #e09610; }
+.script-regen-btn {
+padding: 7px 14px; border-radius: 7px; border: 1.5px solid #e5ddd4;
+background: #fff; color: var(–bark);
+font-family: Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 700;
+letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer; flex: 1;
+}
+.script-regen-btn:hover { border-color: var(–bark); }
+
 @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
 @keyframes spin { to { transform: rotate(360deg); } }
 </style>
@@ -609,6 +675,18 @@ display: flex; align-items: center; justify-content: center; gap: 8px;
       <canvas id="thumbnailCanvas" width="1280" height="672"></canvas>
     </div>
     <button class="download-thumb-btn" onclick="downloadThumbnail()">⬇ Download Thumbnail (1280×672)</button>
+  </div>
+
+  <!-- SCRIPT EDITOR -->
+
+  <div class="script-section">
+    <div class="script-header" id="scriptHeader" onclick="toggleScriptEditor()">
+      <span class="script-header-title">✏️ Edit Script &amp; Slide Timing</span>
+      <span class="script-chevron" id="scriptChevron">▼</span>
+    </div>
+    <div class="script-body" id="scriptBody">
+      <div id="scriptCards"></div>
+    </div>
   </div>
 </div>
 
@@ -920,6 +998,7 @@ Rules:
     clearInterval(msgInt);
     loadingEl.style.display = 'none';
     slides = lesson.slides;
+    slideDurations = slides.map(() => slideDuration);
     currentSlide = 0;
     showSlide(0);
     document.getElementById('player').style.display = 'block';
@@ -943,13 +1022,33 @@ function isCountingSlide(slide) {
   return hasManyNumbers || (countingHeading && slide.bullets && slide.bullets.length >= 3);
 }
 
-const COUNT_EMOJIS = ['⭐','🍎','🎈','🌸','🦋','🐝','🌟','🦆','🐠','🌈','🍭','🚀','🌙','🏆','🎵','🌺','💫','🎯','🎪','🍉'];
-let slideEmojiIndex = 0;
+// Smart emoji matching — picks emoji based on slide text keywords
+function getSlideEmoji(slide) {
+  const text = (slide.heading + ' ' + slide.body + ' ' + (slide.bullets||[]).join(' ')).toLowerCase();
+  const map = [
+    [/star/,          '⭐'], [/sun/,           '☀️'], [/moon/,          '🌙'],
+    [/apple/,         '🍎'], [/orange/,        '🍊'], [/banana/,        '🍌'],
+    [/cookie/,        '🍪'], [/cake/,          '🎂'], [/candy|lollipop/,'🍭'],
+    [/balloon/,       '🎈'], [/ball/,          '⚽'], [/block/,         '🧱'],
+    [/flower/,        '🌸'], [/tree/,          '🌳'], [/leaf/,          '🍃'],
+    [/butterfly/,     '🦋'], [/bee/,           '🐝'], [/bug|insect/,    '🐛'],
+    [/duck/,          '🦆'], [/fish/,          '🐠'], [/dog/,           '🐶'],
+    [/cat/,           '🐱'], [/bird/,          '🐦'], [/frog/,          '🐸'],
+    [/heart/,         '❤️'], [/diamond/,       '💎'], [/circle/,        '🔵'],
+    [/square|box/,    '🟦'], [/triangle/,      '🔺'], [/shape/,         '🔷'],
+    [/pencil|draw/,   '✏️'], [/book/,          '📚'], [/number|count/,  '🔢'],
+    [/rocket|space/,  '🚀'], [/planet/,        '🪐'], [/rain|cloud/,    '🌧️'],
+    [/snow/,          '❄️'], [/fire/,          '🔥'], [/water/,         '💧'],
+  ];
+  for (const [regex, emoji] of map) {
+    if (regex.test(text)) return emoji;
+  }
+  return '⭐'; // default
+}
 
 function buildSlideHTML(slide) {
   if (isCountingSlide(slide) && slide.bullets && slide.bullets.length > 0) {
-    const emoji = COUNT_EMOJIS[slideEmojiIndex % COUNT_EMOJIS.length];
-    slideEmojiIndex++;
+    const emoji = getSlideEmoji(slide);
     const items = slide.bullets.map((b, i) =>
       `<div class="count-item" data-index="${i}">
         <div class="count-emoji">${emoji}</div>
@@ -1267,21 +1366,30 @@ function buildNarration(slide) {
 }
 
 async function speakSlide(slide) {
-  if (voiceMuted || !elevenLabsKey) return;
+  return speakSlideAndAdvance(slide, null);
+}
+
+async function speakSlideAndAdvance(slide, onDone) {
+  if (voiceMuted || !elevenLabsKey) { if (onDone) onDone(); return; }
   stopAudio();
   setVoiceStatus('🎙️ Loading…', '#3d6b4f');
   try {
     const text = buildNarration(slide);
     const url = await fetchTTS(text);
-    if (voiceMuted) { URL.revokeObjectURL(url); setVoiceStatus(''); return; }
+    if (voiceMuted) { URL.revokeObjectURL(url); setVoiceStatus(''); if (onDone) onDone(); return; }
 
     const audio = getAudioEl();
     audio.src = url;
-    audio.onended = () => { URL.revokeObjectURL(url); setVoiceStatus(''); };
-    audio.onerror = () => { URL.revokeObjectURL(url); setVoiceStatus(''); };
-
-    // Play — Safari requires this to be called from within an async chain
-    // triggered by an existing user gesture (Preview button sets this up)
+    audio.onended = () => {
+      URL.revokeObjectURL(url);
+      setVoiceStatus('');
+      if (onDone) setTimeout(onDone, 400); // small natural pause between slides
+    };
+    audio.onerror = () => {
+      URL.revokeObjectURL(url);
+      setVoiceStatus('');
+      if (onDone) onDone();
+    };
     const playPromise = audio.play();
     if (playPromise !== undefined) {
       playPromise
@@ -1289,12 +1397,14 @@ async function speakSlide(slide) {
         .catch(e => {
           setVoiceStatus('⚠️ Tap Preview once to unlock audio', '#c0392b');
           setTimeout(() => setVoiceStatus(''), 5000);
+          if (onDone) onDone(); // fall through so lesson still advances
         });
     }
   } catch(e) {
     console.warn('TTS error:', e.message);
     setVoiceStatus('⚠️ ' + e.message, '#c0392b');
     setTimeout(() => setVoiceStatus(''), 5000);
+    if (onDone) onDone(); // fall through on error
   }
 }
 
@@ -1320,95 +1430,192 @@ async function previewVoice() {
   }
 }
 
+// Per-slide durations (fallback when no audio key)
+let slideDurations = []; // populated when lesson loads
+
+function getSlideDuration(index) {
+  return (slideDurations[index] && slideDurations[index] > 0)
+    ? slideDurations[index] : slideDuration;
+}
+
 function startPlay() {
   isPlaying = true;
   document.getElementById('playBtn').textContent = '⏸ Pause';
-  resetTimer(); startTimer();
-  speakSlide(slides[currentSlide]);
+  advanceWithAudio(currentSlide);
 }
 
 function togglePlay() {
   if (isPlaying) {
     isPlaying = false; clearInterval(timer); stopAudio();
     document.getElementById('playBtn').textContent = '▶ Play';
+    setVoiceStatus('');
   } else {
     isPlaying = true;
     document.getElementById('playBtn').textContent = '⏸ Pause';
-    startTimer();
-    speakSlide(slides[currentSlide]);
+    advanceWithAudio(currentSlide);
   }
 }
 
-function startTimer() {
+// Core: speak slide, then wait for audio to finish (or fallback timer), then advance
+function advanceWithAudio(index) {
   clearInterval(timer);
-  timer = setInterval(() => {
-    timeLeft--; updateTimerDisplay();
-    if (timeLeft <= 0) {
-      if (currentSlide < slides.length - 1) {
-        currentSlide++; showSlide(currentSlide); resetTimer();
-        speakSlide(slides[currentSlide]);
+  if (!isPlaying) return;
+
+  const dur = getSlideDuration(index);
+  timeLeft = dur; updateTimerDisplay();
+
+  if (elevenLabsKey && !voiceMuted) {
+    // Audio-driven: advance only after speech ends
+    speakSlideAndAdvance(slides[index], () => {
+      if (!isPlaying) return;
+      if (index < slides.length - 1) {
+        currentSlide++; showSlide(currentSlide);
+        advanceWithAudio(currentSlide);
       } else {
-        clearInterval(timer); isPlaying = false;
+        isPlaying = false;
         document.getElementById('playBtn').textContent = '▶ Play';
         showEndSlide();
         speakSlide({ heading: 'You did it! Lesson complete. Great job!', body: '', bullets: [] });
+      }
+    });
+  } else {
+    // No audio key — use countdown timer
+    startFallbackTimer(index, dur);
+  }
+}
+
+function startFallbackTimer(index, dur) {
+  timeLeft = dur; updateTimerDisplay();
+  timer = setInterval(() => {
+    timeLeft--; updateTimerDisplay();
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      if (!isPlaying) return;
+      if (index < slides.length - 1) {
+        currentSlide++; showSlide(currentSlide);
+        advanceWithAudio(currentSlide);
+      } else {
+        isPlaying = false;
+        document.getElementById('playBtn').textContent = '▶ Play';
+        showEndSlide();
       }
     }
   }, 1000);
 }
 
 function resetTimer() { timeLeft = slideDuration; updateTimerDisplay(); }
-function updateTimerDisplay() { document.getElementById('timerDisplay').textContent = `${timeLeft}s`; }
+function updateTimerDisplay() {
+  document.getElementById('timerDisplay').textContent = `${timeLeft}s`;
+}
 
 function prevSlide() {
+  clearInterval(timer); stopAudio();
   if (currentSlide > 0) {
-    currentSlide--; showSlide(currentSlide); resetTimer();
-    if (isPlaying) { startTimer(); speakSlide(slides[currentSlide]); }
-    else stopAudio();
+    currentSlide--; showSlide(currentSlide);
+    if (isPlaying) advanceWithAudio(currentSlide);
   }
 }
 function nextSlide() {
+  clearInterval(timer); stopAudio();
   if (currentSlide < slides.length - 1) {
-    currentSlide++; showSlide(currentSlide); resetTimer();
-    if (isPlaying) { startTimer(); speakSlide(slides[currentSlide]); }
-    else stopAudio();
+    currentSlide++; showSlide(currentSlide);
+    if (isPlaying) advanceWithAudio(currentSlide);
   }
 }
 
 function restartVideo() {
   stopAudio(); clearInterval(timer);
   currentSlide = 0; showSlide(0);
-  resetTimer();
   isPlaying = true;
   document.getElementById('playBtn').textContent = '⏸ Pause';
-  startTimer();
-  speakSlide(slides[0]);
+  advanceWithAudio(0);
 }
 
 function restartLesson() {
   clearInterval(timer); stopAudio(); setVoiceStatus('');
-  isPlaying = false; slides = []; currentSlide = 0;
+  isPlaying = false; slides = []; currentSlide = 0; slideDurations = [];
   document.getElementById('player').style.display = 'none';
   document.getElementById('setup').style.display = 'block';
   document.getElementById('generateBtn').disabled = false;
   renderTopics();
 }
 
+// ── SCRIPT EDITOR ──
+function toggleScriptEditor() {
+  const body = document.getElementById('scriptBody');
+  const header = document.getElementById('scriptHeader');
+  const chevron = document.getElementById('scriptChevron');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  header.classList.toggle('open', !isOpen);
+  chevron.classList.toggle('open', !isOpen);
+  if (!isOpen) renderScriptEditor();
+}
+
+function renderScriptEditor() {
+  const container = document.getElementById('scriptCards');
+  if (!slides.length) { container.innerHTML = '<p style="color:#9a8878;font-size:13px;">Generate a lesson first.</p>'; return; }
+  container.innerHTML = slides.map((slide, i) => `
+    <div class="script-card" id="scriptCard${i}">
+      <div class="script-card-num">Slide ${i+1} of ${slides.length} — ${slide.tag}</div>
+      <span class="script-lbl">Heading</span>
+      <input class="script-inp" id="sh${i}" value="${escHtml(slide.heading)}" />
+      <span class="script-lbl">Body Text</span>
+      <textarea class="script-inp" id="sb${i}" rows="2">${escHtml(slide.body)}</textarea>
+
+```
+  <span class="script-lbl">Bullets (one per line)</span>
+  <textarea class="script-inp" id="sbu${i}" rows="3">${(slide.bullets||[]).map(escHtml).join('\n')}</textarea>
+  <div class="script-card-footer">
+    <span class="script-dur-label">Duration (sec)</span>
+    <input class="script-dur-inp" id="sd${i}" type="number" min="3" max="120" value="${getSlideDuration(i)}" />
+    <button class="script-apply-btn" onclick="applySlideEdit(${i})">✓ Apply</button>
+    <button class="script-regen-btn" onclick="regenSlideAudio(${i})">🔈 Re-speak</button>
+  </div>
+</div>`).join('');
+```
+
+}
+
+function escHtml(s) {
+return (s||’’).replace(/&/g,’&’).replace(/</g,’<’).replace(/>/g,’>’).replace(/”/g,’"’);
+}
+
+function applySlideEdit(i) {
+slides[i].heading = document.getElementById(`sh${i}`).value.trim();
+slides[i].body    = document.getElementById(`sb${i}`).value.trim();
+slides[i].bullets = document.getElementById(`sbu${i}`).value.split(’\n’).map(s=>s.trim()).filter(Boolean);
+const dur = parseInt(document.getElementById(`sd${i}`).value) || slideDuration;
+slideDurations[i] = dur;
+// Refresh slide if currently showing
+if (currentSlide === i) showSlide(i);
+setVoiceStatus(‘✅ Slide ’ + (i+1) + ’ updated’, ‘#3d6b4f’);
+setTimeout(() => setVoiceStatus(’’), 2500);
+}
+
+async function regenSlideAudio(i) {
+applySlideEdit(i); // save edits first
+if (!elevenLabsKey) { alert(‘Add your OpenAI key to use voice.’); return; }
+setVoiceStatus(’🎙️ Re-speaking slide ’ + (i+1) + ‘…’, ‘#3d6b4f’);
+stopAudio();
+await speakSlide(slides[i]);
+}
+
 window.onload = () => {
-  let saved = '', savedModel = '', savedElKey = '';
-  try {
-    saved       = localStorage.getItem('ht4u_apikey') || '';
-    savedModel  = localStorage.getItem('ht4u_model')  || 'google/gemini-2.0-flash-001';
-    savedElKey  = localStorage.getItem('ht4u_elkey')  || '';
-  } catch(e) {}
-  if (saved) {
-    apiKey        = saved;
-    aiModel       = savedModel;
-    elevenLabsKey = savedElKey;
-    document.getElementById('apiScreen').style.display = 'none';
-    document.getElementById('setup').style.display = 'block';
-    renderTopics();
-  }
+let saved = ‘’, savedModel = ‘’, savedElKey = ‘’;
+try {
+saved       = localStorage.getItem(‘ht4u_apikey’) || ‘’;
+savedModel  = localStorage.getItem(‘ht4u_model’)  || ‘google/gemini-2.0-flash-001’;
+savedElKey  = localStorage.getItem(‘ht4u_elkey’)  || ‘’;
+} catch(e) {}
+if (saved) {
+apiKey        = saved;
+aiModel       = savedModel;
+elevenLabsKey = savedElKey;
+document.getElementById(‘apiScreen’).style.display = ‘none’;
+document.getElementById(‘setup’).style.display = ‘block’;
+renderTopics();
+}
 };
 </script>
 
