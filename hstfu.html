@@ -512,7 +512,7 @@ letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer; flex: 1;
   </div>
 </div>
 
-<button class="generate-btn" onclick="saveApiKey()">▶ &nbsp; Continue to Lesson Builder</button>
+<button type="button" class="generate-btn" id="continueBtn" onclick="saveApiKey()">▶ &nbsp; Continue to Lesson Builder</button>
 ```
 
   </div>
@@ -850,34 +850,36 @@ let selectedTopic = '', slides = [], currentSlide = 0;
 let isPlaying = false, timer = null, timeLeft = 12, slideDuration = 12;
 let apiKey = '', aiModel = 'google/gemini-2.0-flash-001', elevenLabsKey = '';
 
-// Show/hide custom model input
-document.getElementById('modelSelect').addEventListener('change', function() {
-  document.getElementById('customModelField').style.display = this.value === 'custom' ? 'block' : 'none';
-});
+// Show/hide custom model input — attached in window.onload
 
 function saveApiKey() {
-  const key = document.getElementById('apiKeyInput').value.trim();
-  if (!key) { alert('Please enter your OpenRouter API key.'); return; }
-
-  const modelSel = document.getElementById('modelSelect').value;
-  const model = modelSel === 'custom'
-    ? document.getElementById('customModelInput').value.trim()
-    : modelSel;
-  if (!model) { alert('Please select or enter a model name.'); return; }
-
-  const elKey = document.getElementById('elevenLabsKeyInput').value.trim();
-
-  apiKey = key;
-  aiModel = model;
-  elevenLabsKey = elKey;
   try {
-    localStorage.setItem('ht4u_apikey', key);
-    localStorage.setItem('ht4u_model', model);
-    localStorage.setItem('ht4u_elkey', elKey);
-  } catch(e) {}
-  document.getElementById('apiScreen').style.display = 'none';
-  document.getElementById('setup').style.display = 'block';
-  renderTopics();
+    const key = document.getElementById('apiKeyInput').value.trim();
+    if (!key) { alert('Please enter your OpenRouter API key.'); return; }
+
+    const modelSel = document.getElementById('modelSelect').value;
+    const model = modelSel === 'custom'
+      ? (document.getElementById('customModelInput').value.trim())
+      : modelSel;
+    if (!model) { alert('Please select or enter a model name.'); return; }
+
+    const elKey = document.getElementById('elevenLabsKeyInput').value.trim();
+
+    apiKey        = key;
+    aiModel       = model;
+    elevenLabsKey = elKey;
+    try {
+      localStorage.setItem('ht4u_apikey', key);
+      localStorage.setItem('ht4u_model',  model);
+      localStorage.setItem('ht4u_elkey',  elKey);
+    } catch(e) {}
+
+    document.getElementById('apiScreen').style.display = 'none';
+    document.getElementById('setup').style.display = 'block';
+    renderTopics();
+  } catch(err) {
+    alert('Error saving keys: ' + err.message);
+  }
 }
 
 function changeApiKey() {
@@ -1602,12 +1604,23 @@ await speakSlide(slides[i]);
 }
 
 window.onload = () => {
+// Attach model select listener
+const modelSel = document.getElementById(‘modelSelect’);
+if (modelSel) {
+modelSel.addEventListener(‘change’, function() {
+const cf = document.getElementById(‘customModelField’);
+if (cf) cf.style.display = this.value === ‘custom’ ? ‘block’ : ‘none’;
+});
+}
+
+// Restore saved keys
 let saved = ‘’, savedModel = ‘’, savedElKey = ‘’;
 try {
 saved       = localStorage.getItem(‘ht4u_apikey’) || ‘’;
 savedModel  = localStorage.getItem(‘ht4u_model’)  || ‘google/gemini-2.0-flash-001’;
 savedElKey  = localStorage.getItem(‘ht4u_elkey’)  || ‘’;
 } catch(e) {}
+
 if (saved) {
 apiKey        = saved;
 aiModel       = savedModel;
