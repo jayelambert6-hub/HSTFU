@@ -241,46 +241,38 @@ font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: upper
 
 /* VOICE PANEL */
 .voice-section {
-margin-top: 14px;
-background: #fff;
-border: 2px solid #e5ddd4;
-border-radius: 12px;
-padding: 16px 20px;
-display: flex;
-align-items: center;
-gap: 14px;
-flex-wrap: wrap;
+margin-top: 14px; background: #fff;
+border: 2px solid #e5ddd4; border-radius: 12px; padding: 16px 20px;
+}
+.voice-row {
+display: flex; align-items: center; gap: 10px; flex-wrap: wrap; width: 100%;
 }
 .voice-section-title {
 font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
-text-transform: uppercase; color: #6b5c4e;
-white-space: nowrap;
+text-transform: uppercase; color: #6b5c4e; white-space: nowrap;
 }
 .voice-select {
-flex: 1; min-width: 180px;
-padding: 9px 12px; border: 2px solid #e5ddd4; border-radius: 8px;
+flex: 1; min-width: 180px; padding: 9px 12px;
+border: 2px solid #e5ddd4; border-radius: 8px;
 font-family: Helvetica, Arial, sans-serif; font-size: 13px;
 background: var(–cream); color: var(–bark); outline: none;
 }
 .voice-select:focus { border-color: var(–sunlight); }
-.voice-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .voice-speed-label {
 font-size: 11px; font-weight: 700; color: #9a8878;
 letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap;
 }
-.voice-speed {
-width: 100px;
-accent-color: var(–sunlight);
-}
-.mute-btn {
-padding: 8px 16px; border-radius: 8px;
-border: 2px solid #e5ddd4; background: #fff;
-font-family: Helvetica, Arial, sans-serif;
+.voice-speed { width: 110px; accent-color: var(–sunlight); }
+.voice-action-btn {
+padding: 8px 14px; border-radius: 8px; border: 2px solid #e5ddd4;
+background: #fff; font-family: Helvetica, Arial, sans-serif;
 font-size: 12px; font-weight: 700; letter-spacing: 0.04em;
 text-transform: uppercase; color: var(–bark);
 cursor: pointer; transition: all 0.2s; white-space: nowrap;
 }
-.mute-btn:hover { border-color: var(–bark); }
+.voice-action-btn:hover { border-color: var(–bark); }
+.preview-btn { background: var(–sunlight); border-color: var(–sunlight); color: var(–bark); }
+.preview-btn:hover { background: #e09610; border-color: #e09610; }
 .mute-btn.muted { background: var(–bark); color: #fff; border-color: var(–bark); }
 
 /* THUMBNAIL SECTION */
@@ -488,25 +480,34 @@ display: flex; align-items: center; justify-content: center; gap: 8px;
   </div>
   <div class="footer-row">
     <div class="slide-counter" id="slideCounter">Slide 1 of 7</div>
-    <button class="new-lesson-btn" onclick="restartLesson()">↩ New Lesson</button>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <button class="new-lesson-btn" onclick="restartVideo()">↺ Restart Video</button>
+      <button class="new-lesson-btn" onclick="restartLesson()">↩ New Lesson</button>
+    </div>
   </div>
 
-  <!-- VOICE PANEL — visible bar below video -->
+  <!-- VOICE PANEL -->
 
   <div class="voice-section">
-    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;width:100%;">
-      <span class="voice-section-title">🎙️ Voice</span>
-      <button class="mute-btn" id="muteBtn" onclick="toggleMute()">🔊 Audio ON</button>
-      <select class="voice-select" id="voiceSelect" onchange="onVoiceChange()">
-        <option>Loading voices…</option>
+    <div class="voice-row">
+      <span class="voice-section-title">🎙️ AI Voice</span>
+      <select class="voice-select" id="voiceSelect">
+        <option value="nova">Nova — Warm &amp; Friendly (Female)</option>
+        <option value="shimmer">Shimmer — Soft &amp; Clear (Female)</option>
+        <option value="alloy">Alloy — Neutral &amp; Clear</option>
+        <option value="echo">Echo — Smooth (Male)</option>
+        <option value="onyx">Onyx — Deep &amp; Authoritative (Male)</option>
+        <option value="fable">Fable — Expressive &amp; Story-like</option>
+        <option value="coral">Coral — Bright &amp; Energetic</option>
       </select>
-      <span class="voice-speed-label">Speed</span>
-      <input type="range" class="voice-speed" id="voiceSpeed" min="0.5" max="1.6" step="0.05" value="0.9" oninput="onSpeedChange(this.value)"/>
-      <span id="voiceSpeedVal" style="font-size:12px;font-weight:700;color:#6b5c4e;min-width:34px;">0.9×</span>
-      <button class="mute-btn" id="testVoiceBtn" onclick="testVoice()" style="background:var(--sunlight);color:var(--bark);border-color:var(--sunlight);">🔈 Test Voice</button>
+      <button class="voice-action-btn preview-btn" onclick="previewVoice()">🔈 Preview</button>
+      <button class="voice-action-btn mute-btn" id="muteBtn" onclick="toggleMute()">🔊 ON</button>
     </div>
-    <div id="voiceStatus" style="width:100%;margin-top:8px;font-size:11px;font-weight:700;color:#c0392b;letter-spacing:0.04em;display:none;">
-      ⚠️ Tap "Test Voice" first to unlock audio in your browser.
+    <div class="voice-row" style="margin-top:10px;">
+      <span class="voice-speed-label">Speed</span>
+      <input type="range" class="voice-speed" id="voiceSpeed" min="0.7" max="1.3" step="0.05" value="1.0" oninput="updateSpeedLabel(this.value)"/>
+      <span id="voiceSpeedVal" style="font-size:12px;font-weight:700;color:#6b5c4e;min-width:34px;">1.0×</span>
+      <div id="voiceStatus" style="font-size:11px;font-weight:700;color:#3d6b4f;letter-spacing:0.03em;margin-left:8px;"></div>
     </div>
   </div>
 
@@ -995,176 +996,133 @@ function downloadThumbnail() {
   link.click();
 }
 
-// ── VOICE / WEB SPEECH API ──
-let voices = [];
-let selectedVoice = null;
+// ── OPENAI TTS VIA OPENROUTER ──
 let voiceMuted = false;
-let voiceRate = 0.9;
-let isSpeaking = false;
-let audioUnlocked = false; // tracks whether user has tapped to unlock audio
+let currentAudio = null;
+let audioQueue = [];
+let isProcessingAudio = false;
 
-function loadVoices() {
-  if (!window.speechSynthesis) return;
-  voices = window.speechSynthesis.getVoices();
-  if (!voices.length) return;
-  const sel = document.getElementById('voiceSelect');
-  if (!sel) return;
-  sel.innerHTML = '';
-
-  const english = voices.filter(v => v.lang.startsWith('en'));
-  const others  = voices.filter(v => !v.lang.startsWith('en'));
-
-  if (english.length) {
-    const grp = document.createElement('optgroup');
-    grp.label = '🇺🇸 English Voices';
-    english.forEach(v => {
-      const opt = document.createElement('option');
-      opt.value = v.name;
-      opt.textContent = `${v.name} (${v.lang})`;
-      grp.appendChild(opt);
-    });
-    sel.appendChild(grp);
-  }
-  if (others.length) {
-    const grp = document.createElement('optgroup');
-    grp.label = '🌍 Other Languages';
-    others.forEach(v => {
-      const opt = document.createElement('option');
-      opt.value = v.name;
-      opt.textContent = `${v.name} (${v.lang})`;
-      grp.appendChild(opt);
-    });
-    sel.appendChild(grp);
-  }
-
-  // Pick best default voice
-  const preferred = ['Samantha', 'Alex', 'Google US English', 'Microsoft Aria Online', 'Karen', 'Moira', 'Fiona', 'Daniel'];
-  let def = english[0];
-  for (const name of preferred) {
-    const found = voices.find(v => v.name.includes(name));
-    if (found) { def = found; break; }
-  }
-  if (def) { sel.value = def.name; selectedVoice = def; }
-
-  // Show warning to unlock audio
-  const status = document.getElementById('voiceStatus');
-  if (status && !audioUnlocked) status.style.display = 'block';
-}
-
-if (window.speechSynthesis) {
-  window.speechSynthesis.onvoiceschanged = loadVoices;
-  loadVoices();
-}
-
-function onVoiceChange() {
-  const sel = document.getElementById('voiceSelect');
-  selectedVoice = voices.find(v => v.name === sel.value) || null;
-  stopSpeech();
-}
-
-function onSpeedChange(val) {
-  voiceRate = parseFloat(val);
-  document.getElementById('voiceSpeedVal').textContent = voiceRate.toFixed(2) + '×';
+function updateSpeedLabel(val) {
+  document.getElementById('voiceSpeedVal').textContent = parseFloat(val).toFixed(2) + '×';
 }
 
 function toggleMute() {
   voiceMuted = !voiceMuted;
   const btn = document.getElementById('muteBtn');
-  btn.textContent = voiceMuted ? '🔇 Audio OFF' : '🔊 Audio ON';
+  btn.textContent = voiceMuted ? '🔇 OFF' : '🔊 ON';
   btn.classList.toggle('muted', voiceMuted);
-  if (voiceMuted) stopSpeech();
-  else if (isPlaying && slides[currentSlide]) speakSlide(slides[currentSlide]);
+  if (voiceMuted) stopAudio();
 }
 
-// Test voice button — this is the key unlock gesture
-function testVoice() {
-  if (!window.speechSynthesis) {
-    alert('Sorry, your browser does not support text-to-speech.');
-    return;
+function stopAudio() {
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio.src = '';
+    currentAudio = null;
   }
-  audioUnlocked = true;
-  const status = document.getElementById('voiceStatus');
-  if (status) status.style.display = 'none';
-
-  stopSpeech();
-  const sel = document.getElementById('voiceSelect');
-  selectedVoice = voices.find(v => v.name === sel.value) || voices[0] || null;
-
-  const utter = new SpeechSynthesisUtterance('Audio is ready. Hit Play to start your lesson!');
-  if (selectedVoice) utter.voice = selectedVoice;
-  utter.rate = voiceRate;
-  utter.pitch = 1.05;
-  utter.volume = 1;
-  window.speechSynthesis.speak(utter);
+  audioQueue = [];
+  isProcessingAudio = false;
 }
 
-function stopSpeech() {
-  if (window.speechSynthesis) {
-    window.speechSynthesis.cancel();
-    isSpeaking = false;
+function setVoiceStatus(msg, color) {
+  const el = document.getElementById('voiceStatus');
+  if (el) { el.textContent = msg; el.style.color = color || '#3d6b4f'; }
+}
+
+async function fetchTTS(text) {
+  const voice = document.getElementById('voiceSelect').value;
+  const speed = parseFloat(document.getElementById('voiceSpeed').value);
+  const res = await fetch('https://openrouter.ai/api/v1/audio/speech', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`,
+      'HTTP-Referer': 'https://homeschooltools4u.com',
+      'X-Title': 'Homeschool Tools 4 U'
+    },
+    body: JSON.stringify({
+      model: 'openai/tts-1',
+      input: text,
+      voice: voice,
+      speed: speed,
+      response_format: 'mp3'
+    })
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err?.error?.message || `TTS error ${res.status}`);
   }
+  const blob = await res.blob();
+  return URL.createObjectURL(blob);
 }
 
-function speakSlide(slide) {
-  if (!window.speechSynthesis || voiceMuted || !audioUnlocked) return;
-  stopSpeech();
+async function speakSlide(slide) {
+  if (voiceMuted || !apiKey) return;
+  stopAudio();
 
+  // Build narration text
   let text = slide.heading + '. ';
   if (slide.body) {
-    // Strip HTML tags from body
     const tmp = document.createElement('div');
     tmp.innerHTML = slide.body;
-    text += (tmp.textContent || tmp.innerText || '') + ' ';
+    const bodyText = (tmp.textContent || tmp.innerText || '').trim();
+    if (bodyText) text += bodyText + ' ';
   }
   if (slide.bullets && slide.bullets.length) {
     text += slide.bullets.join('. ') + '.';
   }
 
-  const utter = new SpeechSynthesisUtterance(text);
-  if (selectedVoice) utter.voice = selectedVoice;
-  utter.rate   = voiceRate;
-  utter.pitch  = 1.05;
-  utter.volume = 1;
-  utter.onstart = () => { isSpeaking = true; };
-  utter.onend   = () => { isSpeaking = false; };
-  utter.onerror = (e) => { isSpeaking = false; console.warn('Speech error:', e.error); };
-
-  setTimeout(() => {
-    if (!voiceMuted && isPlaying && audioUnlocked) {
-      window.speechSynthesis.speak(utter);
-    }
-  }, 400);
+  setVoiceStatus('🎙️ Speaking…', '#3d6b4f');
+  try {
+    const url = await fetchTTS(text);
+    if (voiceMuted) { URL.revokeObjectURL(url); setVoiceStatus(''); return; }
+    const audio = new Audio(url);
+    currentAudio = audio;
+    audio.onended = () => { URL.revokeObjectURL(url); currentAudio = null; setVoiceStatus(''); };
+    audio.onerror = () => { URL.revokeObjectURL(url); currentAudio = null; setVoiceStatus(''); };
+    await audio.play();
+  } catch(e) {
+    console.warn('TTS error:', e.message);
+    setVoiceStatus('⚠️ Voice error: ' + e.message, '#c0392b');
+    setTimeout(() => setVoiceStatus(''), 4000);
+  }
 }
 
-function speakEnd() {
-  if (!window.speechSynthesis || voiceMuted || !audioUnlocked) return;
-  stopSpeech();
-  const utter = new SpeechSynthesisUtterance('Lesson complete! Great job!');
-  if (selectedVoice) utter.voice = selectedVoice;
-  utter.rate = voiceRate; utter.pitch = 1.1; utter.volume = 1;
-  window.speechSynthesis.speak(utter);
+async function previewVoice() {
+  if (!apiKey) { alert('No API key found. Please set up your OpenRouter key first.'); return; }
+  stopAudio();
+  setVoiceStatus('🎙️ Loading preview…', '#3d6b4f');
+  try {
+    const voice = document.getElementById('voiceSelect').value;
+    const url = await fetchTTS(`Hi! I'm ${voice}. I'll be reading your lessons today. Let's start learning!`);
+    const audio = new Audio(url);
+    currentAudio = audio;
+    audio.onended = () => { URL.revokeObjectURL(url); currentAudio = null; setVoiceStatus('✅ Preview done — hit Play to start!', '#3d6b4f'); setTimeout(() => setVoiceStatus(''), 3000); };
+    audio.onerror = () => { URL.revokeObjectURL(url); currentAudio = null; setVoiceStatus(''); };
+    await audio.play();
+  } catch(e) {
+    setVoiceStatus('⚠️ ' + e.message, '#c0392b');
+    setTimeout(() => setVoiceStatus(''), 5000);
+  }
 }
 
 function startPlay() {
   isPlaying = true;
   document.getElementById('playBtn').textContent = '⏸ Pause';
   resetTimer(); startTimer();
-  if (audioUnlocked) speakSlide(slides[currentSlide]);
-  else {
-    const status = document.getElementById('voiceStatus');
-    if (status) status.style.display = 'block';
-  }
+  speakSlide(slides[currentSlide]);
 }
 
 function togglePlay() {
   if (isPlaying) {
-    isPlaying = false; clearInterval(timer); stopSpeech();
+    isPlaying = false; clearInterval(timer); stopAudio();
     document.getElementById('playBtn').textContent = '▶ Play';
+    setVoiceStatus('');
   } else {
     isPlaying = true;
     document.getElementById('playBtn').textContent = '⏸ Pause';
     startTimer();
-    if (audioUnlocked) speakSlide(slides[currentSlide]);
+    speakSlide(slides[currentSlide]);
   }
 }
 
@@ -1175,11 +1133,12 @@ function startTimer() {
     if (timeLeft <= 0) {
       if (currentSlide < slides.length - 1) {
         currentSlide++; showSlide(currentSlide); resetTimer();
-        if (audioUnlocked) speakSlide(slides[currentSlide]);
+        speakSlide(slides[currentSlide]);
       } else {
         clearInterval(timer); isPlaying = false;
         document.getElementById('playBtn').textContent = '▶ Play';
-        showEndSlide(); speakEnd();
+        showEndSlide();
+        speakSlide({ heading: 'Lesson complete!', body: 'Great job! You finished the lesson.', bullets: [] });
       }
     }
   }, 1000);
@@ -1191,20 +1150,30 @@ function updateTimerDisplay() { document.getElementById('timerDisplay').textCont
 function prevSlide() {
   if (currentSlide > 0) {
     currentSlide--; showSlide(currentSlide); resetTimer();
-    if (isPlaying) { startTimer(); if (audioUnlocked) speakSlide(slides[currentSlide]); }
-    else stopSpeech();
+    if (isPlaying) { startTimer(); speakSlide(slides[currentSlide]); }
+    else stopAudio();
   }
 }
 function nextSlide() {
   if (currentSlide < slides.length - 1) {
     currentSlide++; showSlide(currentSlide); resetTimer();
-    if (isPlaying) { startTimer(); if (audioUnlocked) speakSlide(slides[currentSlide]); }
-    else stopSpeech();
+    if (isPlaying) { startTimer(); speakSlide(slides[currentSlide]); }
+    else stopAudio();
   }
 }
 
+function restartVideo() {
+  stopAudio(); clearInterval(timer);
+  currentSlide = 0; showSlide(0);
+  resetTimer();
+  isPlaying = true;
+  document.getElementById('playBtn').textContent = '⏸ Pause';
+  startTimer();
+  speakSlide(slides[0]);
+}
+
 function restartLesson() {
-  clearInterval(timer); stopSpeech();
+  clearInterval(timer); stopAudio(); setVoiceStatus('');
   isPlaying = false; slides = []; currentSlide = 0;
   document.getElementById('player').style.display = 'none';
   document.getElementById('setup').style.display = 'block';
