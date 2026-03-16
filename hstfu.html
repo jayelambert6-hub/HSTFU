@@ -116,10 +116,24 @@ border-top-color: var(–sunlight); border-radius: 50%; animation: spin 0.75s li
 
 /* PLAYER */
 #player { display: none; }
+
+/* ── 16:9 YOUTUBE ASPECT RATIO ── */
+.video-wrapper {
+width: 100%;
+position: relative;
+padding-bottom: 56.25%; /* 16:9 */
+height: 0;
+border-radius: 12px;
+overflow: hidden;
+}
 .video-frame {
-background: var(–subject-color); border-radius: 12px; position: relative;
-min-height: 460px; overflow: hidden; display: flex; flex-direction: column;
+position: absolute;
+top: 0; left: 0; width: 100%; height: 100%;
+background: var(–subject-color);
+display: flex; flex-direction: column;
 transition: background 0.4s ease;
+border-radius: 12px;
+overflow: hidden;
 }
 .video-frame::before {
 content: ‘’; position: absolute; inset: 0;
@@ -224,6 +238,82 @@ border: none; border-radius: 8px; font-family: Helvetica, Arial, sans-serif;
 font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer;
 }
 .end-replay:hover { background: #e09610; }
+
+/* VOICE PANEL */
+.voice-section {
+margin-top: 14px;
+background: #fff;
+border: 2px solid #e5ddd4;
+border-radius: 12px;
+padding: 16px 20px;
+display: flex;
+align-items: center;
+gap: 14px;
+flex-wrap: wrap;
+}
+.voice-section-title {
+font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+text-transform: uppercase; color: #6b5c4e;
+white-space: nowrap;
+}
+.voice-select {
+flex: 1; min-width: 180px;
+padding: 9px 12px; border: 2px solid #e5ddd4; border-radius: 8px;
+font-family: Helvetica, Arial, sans-serif; font-size: 13px;
+background: var(–cream); color: var(–bark); outline: none;
+}
+.voice-select:focus { border-color: var(–sunlight); }
+.voice-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.voice-speed-label {
+font-size: 11px; font-weight: 700; color: #9a8878;
+letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap;
+}
+.voice-speed {
+width: 100px;
+accent-color: var(–sunlight);
+}
+.mute-btn {
+padding: 8px 16px; border-radius: 8px;
+border: 2px solid #e5ddd4; background: #fff;
+font-family: Helvetica, Arial, sans-serif;
+font-size: 12px; font-weight: 700; letter-spacing: 0.04em;
+text-transform: uppercase; color: var(–bark);
+cursor: pointer; transition: all 0.2s; white-space: nowrap;
+}
+.mute-btn:hover { border-color: var(–bark); }
+.mute-btn.muted { background: var(–bark); color: #fff; border-color: var(–bark); }
+
+/* THUMBNAIL SECTION */
+.thumbnail-section {
+margin-top: 18px;
+background: #fff;
+border: 2px solid #e5ddd4;
+border-radius: 12px;
+padding: 18px 20px;
+}
+.thumbnail-section-title {
+font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+color: #6b5c4e; margin-bottom: 12px;
+}
+.thumbnail-preview-wrap {
+width: 100%; position: relative; padding-bottom: 52.5%; /* ~1280x672 YouTube thumb ratio */
+height: 0; border-radius: 8px; overflow: hidden; margin-bottom: 12px;
+}
+#thumbnailCanvas {
+position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+border-radius: 8px;
+}
+.download-thumb-btn {
+width: 100%; padding: 12px;
+background: var(–bark); color: #fff;
+border: none; border-radius: 8px;
+font-family: Helvetica, Arial, sans-serif;
+font-size: 12px; font-weight: 700;
+letter-spacing: 0.06em; text-transform: uppercase;
+cursor: pointer; transition: background 0.2s;
+display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.download-thumb-btn:hover { background: #4a3020; }
 
 @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
 @keyframes spin { to { transform: rotate(360deg); } }
@@ -368,22 +458,24 @@ font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: upper
 <!-- PLAYER -->
 
 <div id="player">
-  <div class="video-frame" id="videoFrame">
-    <div class="video-topbar">
-      <div class="video-channel">
-        <div class="video-channel-logo">H</div>
-        <div class="video-channel-name">Homeschool Tools 4 U</div>
+  <div class="video-wrapper">
+    <div class="video-frame" id="videoFrame">
+      <div class="video-topbar">
+        <div class="video-channel">
+          <div class="video-channel-logo">H</div>
+          <div class="video-channel-name">Homeschool Tools 4 U</div>
+        </div>
+        <div class="video-tags">
+          <div class="tag" id="ageTag">AGES 7-9</div>
+          <div class="tag" id="subjectTag">MATH</div>
+        </div>
       </div>
-      <div class="video-tags">
-        <div class="tag" id="ageTag">AGES 7-9</div>
-        <div class="tag" id="subjectTag">MATH</div>
+      <div class="video-content">
+        <div class="slide-inner" id="slideInner"></div>
       </div>
-    </div>
-    <div class="video-content">
-      <div class="slide-inner" id="slideInner"></div>
-    </div>
-    <div class="video-progressbar">
-      <div class="video-progressfill" id="videoProgressFill"></div>
+      <div class="video-progressbar">
+        <div class="video-progressfill" id="videoProgressFill"></div>
+      </div>
     </div>
   </div>
   <div class="controls">
@@ -397,6 +489,31 @@ font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: upper
   <div class="footer-row">
     <div class="slide-counter" id="slideCounter">Slide 1 of 7</div>
     <button class="new-lesson-btn" onclick="restartLesson()">↩ New Lesson</button>
+  </div>
+
+  <!-- VOICE PANEL -->
+
+  <div class="voice-section">
+    <div class="voice-section-title">🎙️ Voice</div>
+    <select class="voice-select" id="voiceSelect" onchange="onVoiceChange()">
+      <option>Loading voices…</option>
+    </select>
+    <div class="voice-controls">
+      <span class="voice-speed-label">Speed</span>
+      <input type="range" class="voice-speed" id="voiceSpeed" min="0.5" max="1.5" step="0.05" value="0.95" oninput="onSpeedChange(this.value)"/>
+      <span id="voiceSpeedVal" style="font-size:12px;font-weight:700;color:#6b5c4e;min-width:30px;">0.95×</span>
+      <button class="mute-btn" id="muteBtn" onclick="toggleMute()">🔊 On</button>
+    </div>
+  </div>
+
+  <!-- THUMBNAIL DOWNLOAD -->
+
+  <div class="thumbnail-section">
+    <div class="thumbnail-section-title">📥 YouTube Thumbnail — Download for this lesson</div>
+    <div class="thumbnail-preview-wrap">
+      <canvas id="thumbnailCanvas" width="1280" height="672"></canvas>
+    </div>
+    <button class="download-thumb-btn" onclick="downloadThumbnail()">⬇ Download Thumbnail (1280×672)</button>
   </div>
 </div>
 
@@ -689,7 +806,7 @@ Rules:
       },
       body: JSON.stringify({
         model: aiModel,
-        max_tokens: 3000,
+        max_tokens: 8192,
         messages: [{ role: "user", content: prompt }]
       })
     });
@@ -707,6 +824,7 @@ Rules:
     showSlide(0);
     document.getElementById('player').style.display = 'block';
     startPlay();
+    setTimeout(drawThumbnail, 100);
 
   } catch(e) {
     clearInterval(msgInt);
@@ -759,20 +877,259 @@ function showEndSlide() {
 
 function goToSlide(i) { currentSlide = i; showSlide(i); resetTimer(); if (isPlaying) startTimer(); }
 
+function drawThumbnail() {
+  const canvas = document.getElementById('thumbnailCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = 1280, H = 672;
+  canvas.width = W; canvas.height = H;
+
+  const subject = document.getElementById('subject').value;
+  const color = SUBJECT_COLORS[subject] || '#3B82C4';
+  const ageGroup = document.getElementById('ageGroup').value;
+  const lessonTitle = slides[0] ? slides[0].heading : 'Lesson';
+
+  // Background
+  ctx.fillStyle = color;
+  ctx.fillRect(0, 0, W, H);
+
+  // Radial highlight top-left
+  const grad = ctx.createRadialGradient(200, 150, 0, 200, 150, 500);
+  grad.addColorStop(0, 'rgba(255,255,255,0.12)');
+  grad.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
+
+  // Dark overlay bottom
+  const grad2 = ctx.createLinearGradient(0, H * 0.5, 0, H);
+  grad2.addColorStop(0, 'rgba(0,0,0,0)');
+  grad2.addColorStop(1, 'rgba(0,0,0,0.35)');
+  ctx.fillStyle = grad2;
+  ctx.fillRect(0, 0, W, H);
+
+  // Age badge — top left
+  ctx.fillStyle = 'rgba(0,0,0,0.25)';
+  roundRect(ctx, 48, 44, 200, 44, 8);
+  ctx.fill();
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 20px Helvetica, Arial, sans-serif';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(ageGroup.toUpperCase(), 68, 66);
+
+  // Subject badge — top right
+  ctx.fillStyle = '#F5A623';
+  roundRect(ctx, W - 248, 44, 200, 44, 8);
+  ctx.fill();
+  ctx.fillStyle = '#2C1A0E';
+  ctx.font = 'bold 20px Helvetica, Arial, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(subject.toUpperCase(), W - 148, 66);
+
+  // Main title — center
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 82px Helvetica, Arial, sans-serif';
+  ctx.textBaseline = 'middle';
+  const title = lessonTitle.length > 36 ? lessonTitle.substring(0, 34) + '…' : lessonTitle;
+  wrapText(ctx, title, W / 2, H / 2 - 40, W - 160, 96);
+
+  // Channel name — bottom center
+  ctx.font = 'bold 28px Helvetica, Arial, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.75)';
+  ctx.textAlign = 'center';
+  ctx.fillText('Homeschool Tools 4 U', W / 2, H - 52);
+
+  // Sunlight logo box bottom left
+  ctx.fillStyle = '#F5A623';
+  roundRect(ctx, 48, H - 80, 52, 52, 8);
+  ctx.fill();
+  ctx.fillStyle = '#2C1A0E';
+  ctx.font = 'bold 28px Helvetica, Arial, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('H', 74, H - 54);
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+  const words = text.split(' ');
+  let line = '';
+  let lines = [];
+  for (let n = 0; n < words.length; n++) {
+    const testLine = line + words[n] + ' ';
+    if (ctx.measureText(testLine).width > maxWidth && n > 0) {
+      lines.push(line.trim());
+      line = words[n] + ' ';
+    } else { line = testLine; }
+  }
+  lines.push(line.trim());
+  const startY = y - ((lines.length - 1) * lineHeight) / 2;
+  lines.forEach((l, i) => ctx.fillText(l, x, startY + i * lineHeight));
+}
+
+function downloadThumbnail() {
+  drawThumbnail();
+  const canvas = document.getElementById('thumbnailCanvas');
+  const subject = document.getElementById('subject').value;
+  const topic = (slides[0]?.heading || 'lesson').replace(/[^a-z0-9]/gi, '_').toLowerCase();
+  const link = document.createElement('a');
+  link.download = `HT4U_${subject}_${topic}_thumbnail.png`;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+// ── VOICE / WEB SPEECH API ──
+let voices = [];
+let selectedVoice = null;
+let voiceMuted = false;
+let voiceRate = 0.95;
+let isSpeaking = false;
+
+function loadVoices() {
+  voices = window.speechSynthesis.getVoices();
+  if (!voices.length) return;
+  const sel = document.getElementById('voiceSelect');
+  sel.innerHTML = '';
+
+  // Group: English first, then others
+  const english = voices.filter(v => v.lang.startsWith('en'));
+  const others  = voices.filter(v => !v.lang.startsWith('en'));
+
+  if (english.length) {
+    const grp = document.createElement('optgroup');
+    grp.label = 'English Voices';
+    english.forEach((v, i) => {
+      const opt = document.createElement('option');
+      opt.value = v.name;
+      opt.textContent = `${v.name} (${v.lang})`;
+      grp.appendChild(opt);
+    });
+    sel.appendChild(grp);
+  }
+  if (others.length) {
+    const grp = document.createElement('optgroup');
+    grp.label = 'Other Languages';
+    others.forEach(v => {
+      const opt = document.createElement('option');
+      opt.value = v.name;
+      opt.textContent = `${v.name} (${v.lang})`;
+      grp.appendChild(opt);
+    });
+    sel.appendChild(grp);
+  }
+
+  // Auto-select a good default: prefer Samantha, Alex, or first English voice
+  const preferred = ['Samantha', 'Alex', 'Google US English', 'Microsoft Aria', 'Karen', 'Moira', 'Fiona'];
+  let def = english[0];
+  for (const name of preferred) {
+    const found = voices.find(v => v.name.includes(name));
+    if (found) { def = found; break; }
+  }
+  if (def) { sel.value = def.name; selectedVoice = def; }
+}
+
+// Voices load async — handle both immediate and delayed
+if (window.speechSynthesis) {
+  loadVoices();
+  window.speechSynthesis.onvoiceschanged = loadVoices;
+}
+
+function onVoiceChange() {
+  const sel = document.getElementById('voiceSelect');
+  selectedVoice = voices.find(v => v.name === sel.value) || null;
+  stopSpeech();
+}
+
+function onSpeedChange(val) {
+  voiceRate = parseFloat(val);
+  document.getElementById('voiceSpeedVal').textContent = voiceRate.toFixed(2) + '×';
+  stopSpeech();
+}
+
+function toggleMute() {
+  voiceMuted = !voiceMuted;
+  const btn = document.getElementById('muteBtn');
+  btn.textContent = voiceMuted ? '🔇 Off' : '🔊 On';
+  btn.classList.toggle('muted', voiceMuted);
+  if (voiceMuted) stopSpeech();
+}
+
+function stopSpeech() {
+  if (window.speechSynthesis) {
+    window.speechSynthesis.cancel();
+    isSpeaking = false;
+  }
+}
+
+function speakSlide(slide) {
+  if (!window.speechSynthesis || voiceMuted) return;
+  stopSpeech();
+
+  // Build natural narration: heading + body + bullets
+  let text = slide.heading + '. ';
+  if (slide.body) text += slide.body + ' ';
+  if (slide.bullets && slide.bullets.length) {
+    text += slide.bullets.join('. ') + '.';
+  }
+
+  const utter = new SpeechSynthesisUtterance(text);
+  if (selectedVoice) utter.voice = selectedVoice;
+  utter.rate  = voiceRate;
+  utter.pitch = 1.05;
+  utter.volume = 1;
+
+  utter.onstart = () => { isSpeaking = true; };
+  utter.onend   = () => { isSpeaking = false; };
+  utter.onerror = () => { isSpeaking = false; };
+
+  // Small natural pause before speaking (let slide animate in first)
+  setTimeout(() => {
+    if (!voiceMuted && isPlaying) {
+      window.speechSynthesis.speak(utter);
+    }
+  }, 500);
+}
+
+function speakEnd() {
+  if (!window.speechSynthesis || voiceMuted) return;
+  stopSpeech();
+  const utter = new SpeechSynthesisUtterance('Lesson complete! Great job!');
+  if (selectedVoice) utter.voice = selectedVoice;
+  utter.rate = voiceRate;
+  utter.pitch = 1.1;
+  window.speechSynthesis.speak(utter);
+}
+
 function startPlay() {
   isPlaying = true;
   document.getElementById('playBtn').textContent = '⏸ Pause';
   resetTimer(); startTimer();
+  speakSlide(slides[currentSlide]);
 }
 
 function togglePlay() {
   if (isPlaying) {
     isPlaying = false; clearInterval(timer);
     document.getElementById('playBtn').textContent = '▶ Play';
+    stopSpeech();
   } else {
     isPlaying = true;
     document.getElementById('playBtn').textContent = '⏸ Pause';
     startTimer();
+    speakSlide(slides[currentSlide]);
   }
 }
 
@@ -783,10 +1140,12 @@ function startTimer() {
     if (timeLeft <= 0) {
       if (currentSlide < slides.length - 1) {
         currentSlide++; showSlide(currentSlide); resetTimer();
+        speakSlide(slides[currentSlide]);
       } else {
         clearInterval(timer); isPlaying = false;
         document.getElementById('playBtn').textContent = '▶ Play';
         showEndSlide();
+        speakEnd();
       }
     }
   }, 1000);
@@ -796,14 +1155,23 @@ function resetTimer() { timeLeft = slideDuration; updateTimerDisplay(); }
 function updateTimerDisplay() { document.getElementById('timerDisplay').textContent = `${timeLeft}s`; }
 
 function prevSlide() {
-  if (currentSlide > 0) { currentSlide--; showSlide(currentSlide); resetTimer(); if (isPlaying) startTimer(); }
+  if (currentSlide > 0) {
+    currentSlide--; showSlide(currentSlide); resetTimer();
+    if (isPlaying) { startTimer(); speakSlide(slides[currentSlide]); }
+    else stopSpeech();
+  }
 }
 function nextSlide() {
-  if (currentSlide < slides.length - 1) { currentSlide++; showSlide(currentSlide); resetTimer(); if (isPlaying) startTimer(); }
+  if (currentSlide < slides.length - 1) {
+    currentSlide++; showSlide(currentSlide); resetTimer();
+    if (isPlaying) { startTimer(); speakSlide(slides[currentSlide]); }
+    else stopSpeech();
+  }
 }
 
 function restartLesson() {
-  clearInterval(timer); isPlaying = false; slides = []; currentSlide = 0;
+  clearInterval(timer); stopSpeech();
+  isPlaying = false; slides = []; currentSlide = 0;
   document.getElementById('player').style.display = 'none';
   document.getElementById('setup').style.display = 'block';
   document.getElementById('generateBtn').disabled = false;
