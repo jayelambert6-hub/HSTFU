@@ -326,43 +326,70 @@ display: flex; align-items: center; justify-content: center; gap: 8px;
 
 <div id="apiScreen">
   <div class="api-card">
-    <h2>Connect to OpenRouter</h2>
-    <p>This lesson player uses OpenRouter — one API key gives you access to many AI models at budget-friendly prices. Your key is saved in your browser only and sent directly to OpenRouter's servers.</p>
-    <div class="api-note">
-      🔑 Get your free API key at <a href="https://openrouter.ai/keys" target="_blank">openrouter.ai/keys</a> → Sign up → Create Key. Add a small credit ($5 goes a long way). You only need to do this once.
+    <h2>Connect Your API Keys</h2>
+    <p>This app uses two services — OpenRouter for lesson generation and ElevenLabs for natural AI voice. Both keys are saved in your browser only.</p>
+
+```
+<!-- OpenRouter -->
+<div style="border:2px solid #e5ddd4;border-radius:10px;padding:18px;margin-bottom:16px;">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+    <div style="width:32px;height:32px;background:#6B3FA0;border-radius:7px;display:grid;place-items:center;font-size:15px;">🔀</div>
+    <div>
+      <div style="font-size:13px;font-weight:700;">OpenRouter — Lesson Generation</div>
+      <div style="font-size:11px;color:#9a8878;">Get your key at <a href="https://openrouter.ai/keys" target="_blank" style="color:var(--sky);">openrouter.ai/keys</a> — add $5 credit</div>
     </div>
-    <div class="field">
-      <label>OpenRouter API Key</label>
-      <input type="password" id="apiKeyInput" placeholder="sk-or-…" />
+  </div>
+  <div class="field" style="margin-bottom:12px;">
+    <label>OpenRouter API Key</label>
+    <input type="password" id="apiKeyInput" placeholder="sk-or-…" />
+  </div>
+  <div class="field" style="margin-bottom:0;">
+    <label>AI Model</label>
+    <select id="modelSelect">
+      <optgroup label="💰 Best Value (Recommended)">
+        <option value="google/gemini-2.0-flash-001" selected>Google Gemini 2.0 Flash — Fast &amp; very cheap</option>
+        <option value="google/gemini-flash-1.5">Google Gemini 1.5 Flash — Ultra budget</option>
+        <option value="meta-llama/llama-3.3-70b-instruct">Meta Llama 3.3 70B — Free tier available</option>
+        <option value="mistralai/mistral-small-3.1-24b-instruct">Mistral Small 3.1 — Very affordable</option>
+      </optgroup>
+      <optgroup label="⚡ Mid Range">
+        <option value="anthropic/claude-haiku-4-5">Claude Haiku 4.5 — Fast &amp; capable</option>
+        <option value="openai/gpt-4.1-mini">GPT-4.1 Mini — Solid &amp; affordable</option>
+        <option value="google/gemini-2.5-flash-preview">Google Gemini 2.5 Flash — Very capable</option>
+      </optgroup>
+      <optgroup label="🚀 High Quality">
+        <option value="anthropic/claude-sonnet-4-5">Claude Sonnet 4.5 — High quality</option>
+        <option value="openai/gpt-4.1">GPT-4.1 — Premium quality</option>
+      </optgroup>
+      <optgroup label="✏️ Custom">
+        <option value="custom">Enter model name manually…</option>
+      </optgroup>
+    </select>
+  </div>
+  <div class="field" id="customModelField" style="display:none;margin-bottom:0;margin-top:12px;">
+    <label>Custom Model Name</label>
+    <input type="text" id="customModelInput" placeholder="e.g. mistralai/mixtral-8x7b-instruct" />
+  </div>
+</div>
+
+<!-- ElevenLabs -->
+<div style="border:2px solid #e5ddd4;border-radius:10px;padding:18px;margin-bottom:20px;">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+    <div style="width:32px;height:32px;background:#F5A623;border-radius:7px;display:grid;place-items:center;font-size:15px;">🎙️</div>
+    <div>
+      <div style="font-size:13px;font-weight:700;">ElevenLabs — AI Voice</div>
+      <div style="font-size:11px;color:#9a8878;">Get your free key at <a href="https://elevenlabs.io" target="_blank" style="color:var(--sky);">elevenlabs.io</a> → Profile → API Key • 10,000 chars/month free</div>
     </div>
-    <div class="field">
-      <label>AI Model — <span style="font-weight:400;text-transform:none;letter-spacing:0;">choose your budget preference</span></label>
-      <select id="modelSelect">
-        <optgroup label="💰 Best Value (Recommended)">
-          <option value="google/gemini-2.0-flash-001" selected>Google Gemini 2.0 Flash — Fast &amp; very cheap</option>
-          <option value="google/gemini-flash-1.5">Google Gemini 1.5 Flash — Ultra budget</option>
-          <option value="meta-llama/llama-3.3-70b-instruct">Meta Llama 3.3 70B — Free tier available</option>
-          <option value="mistralai/mistral-small-3.1-24b-instruct">Mistral Small 3.1 — Very affordable</option>
-        </optgroup>
-        <optgroup label="⚡ Mid Range">
-          <option value="anthropic/claude-haiku-4-5">Claude Haiku 4.5 — Fast &amp; capable</option>
-          <option value="openai/gpt-4.1-mini">GPT-4.1 Mini — Solid &amp; affordable</option>
-          <option value="google/gemini-2.5-flash-preview">Google Gemini 2.5 Flash — Very capable</option>
-        </optgroup>
-        <optgroup label="🚀 High Quality">
-          <option value="anthropic/claude-sonnet-4-5">Claude Sonnet 4.5 — High quality</option>
-          <option value="openai/gpt-4.1">GPT-4.1 — Premium quality</option>
-        </optgroup>
-        <optgroup label="✏️ Custom">
-          <option value="custom">Enter model name manually…</option>
-        </optgroup>
-      </select>
-    </div>
-    <div class="field" id="customModelField" style="display:none;">
-      <label>Custom Model Name</label>
-      <input type="text" id="customModelInput" placeholder="e.g. mistralai/mixtral-8x7b-instruct" />
-    </div>
-    <button class="generate-btn" onclick="saveApiKey()">▶ &nbsp; Continue to Lesson Builder</button>
+  </div>
+  <div class="field" style="margin-bottom:0;">
+    <label>ElevenLabs API Key <span style="font-weight:400;text-transform:none;letter-spacing:0;">(optional — lessons work without it)</span></label>
+    <input type="password" id="elevenLabsKeyInput" placeholder="sk_…" />
+  </div>
+</div>
+
+<button class="generate-btn" onclick="saveApiKey()">▶ &nbsp; Continue to Lesson Builder</button>
+```
+
   </div>
 </div>
 
@@ -490,15 +517,22 @@ display: flex; align-items: center; justify-content: center; gap: 8px;
 
   <div class="voice-section">
     <div class="voice-row">
-      <span class="voice-section-title">🎙️ AI Voice</span>
+      <span class="voice-section-title">🎙️ ElevenLabs Voice</span>
       <select class="voice-select" id="voiceSelect">
-        <option value="nova">Nova — Warm &amp; Friendly (Female)</option>
-        <option value="shimmer">Shimmer — Soft &amp; Clear (Female)</option>
-        <option value="alloy">Alloy — Neutral &amp; Clear</option>
-        <option value="echo">Echo — Smooth (Male)</option>
-        <option value="onyx">Onyx — Deep &amp; Authoritative (Male)</option>
-        <option value="fable">Fable — Expressive &amp; Story-like</option>
-        <option value="coral">Coral — Bright &amp; Energetic</option>
+        <optgroup label="👩 Female Voices">
+          <option value="21m00Tcm4TlvDq8ikWAM">Rachel — Calm &amp; Warm (American)</option>
+          <option value="AZnzlk1XvdvUeBnXmlld">Domi — Confident &amp; Strong (American)</option>
+          <option value="EXAVITQu4vr4xnSDxMaL">Bella — Soft &amp; Gentle (American)</option>
+          <option value="MF3mGyEYCl7XYWbV9V6O">Elli — Bright &amp; Young (American)</option>
+          <option value="XrExE9yKIg1WjnnlVkGX">Matilda — Warm &amp; Friendly (American)</option>
+        </optgroup>
+        <optgroup label="👨 Male Voices">
+          <option value="ErXwobaYiN019PkySvjV">Antoni — Warm &amp; Natural (American)</option>
+          <option value="VR6AewLTigWG4xSOukaG">Arnold — Deep &amp; Crisp (American)</option>
+          <option value="pNInz6obpgDQGcFmaJgB">Adam — Deep &amp; Authoritative (American)</option>
+          <option value="yoZ06aMxZJJ28mfd3POQ">Sam — Raspy &amp; Energetic (American)</option>
+          <option value="TxGEqnHWrfWFTfGW9XjX">Josh — Deep &amp; Engaging (American)</option>
+        </optgroup>
       </select>
       <button class="voice-action-btn preview-btn" onclick="previewVoice()">🔈 Preview</button>
       <button class="voice-action-btn mute-btn" id="muteBtn" onclick="toggleMute()">🔊 ON</button>
@@ -680,7 +714,7 @@ const SUBJECT_COLORS = {
 
 let selectedTopic = '', slides = [], currentSlide = 0;
 let isPlaying = false, timer = null, timeLeft = 12, slideDuration = 12;
-let apiKey = '', aiModel = 'google/gemini-2.0-flash-001';
+let apiKey = '', aiModel = 'google/gemini-2.0-flash-001', elevenLabsKey = '';
 
 // Show/hide custom model input
 document.getElementById('modelSelect').addEventListener('change', function() {
@@ -697,11 +731,15 @@ function saveApiKey() {
     : modelSel;
   if (!model) { alert('Please select or enter a model name.'); return; }
 
+  const elKey = document.getElementById('elevenLabsKeyInput').value.trim();
+
   apiKey = key;
   aiModel = model;
+  elevenLabsKey = elKey;
   try {
     localStorage.setItem('ht4u_apikey', key);
     localStorage.setItem('ht4u_model', model);
+    localStorage.setItem('ht4u_elkey', elKey);
   } catch(e) {}
   document.getElementById('apiScreen').style.display = 'none';
   document.getElementById('setup').style.display = 'block';
@@ -710,9 +748,10 @@ function saveApiKey() {
 
 function changeApiKey() {
   document.getElementById('setup').style.display = 'none';
+  document.getElementById('player').style.display = 'none';
   document.getElementById('apiScreen').style.display = 'block';
   document.getElementById('apiKeyInput').value = apiKey;
-  // Try to reselect the saved model
+  document.getElementById('elevenLabsKeyInput').value = elevenLabsKey;
   const sel = document.getElementById('modelSelect');
   let found = false;
   for (let opt of sel.options) { if (opt.value === aiModel) { sel.value = aiModel; found = true; break; } }
@@ -1030,34 +1069,35 @@ function setVoiceStatus(msg, color) {
 }
 
 async function fetchTTS(text) {
-  const voice = document.getElementById('voiceSelect').value;
+  if (!elevenLabsKey) throw new Error('No ElevenLabs key. Add it in Settings → Change API Keys.');
+  const voiceId = document.getElementById('voiceSelect').value;
   const speed = parseFloat(document.getElementById('voiceSpeed').value);
-  const res = await fetch('https://openrouter.ai/api/v1/audio/speech', {
+  const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${apiKey}`,
-      'HTTP-Referer': 'https://homeschooltools4u.com',
-      'X-Title': 'Homeschool Tools 4 U'
+      'xi-api-key': elevenLabsKey
     },
     body: JSON.stringify({
-      model: 'openai/tts-1',
-      input: text,
-      voice: voice,
-      speed: speed,
-      response_format: 'mp3'
+      text: text,
+      model_id: 'eleven_turbo_v2',
+      voice_settings: {
+        stability: 0.5,
+        similarity_boost: 0.75,
+        speed: speed
+      }
     })
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err?.error?.message || `TTS error ${res.status}`);
+    throw new Error(err?.detail?.message || err?.detail || `ElevenLabs error ${res.status}`);
   }
   const blob = await res.blob();
   return URL.createObjectURL(blob);
 }
 
 async function speakSlide(slide) {
-  if (voiceMuted || !apiKey) return;
+  if (voiceMuted || !elevenLabsKey) return;
   stopAudio();
 
   // Build narration text
@@ -1089,15 +1129,15 @@ async function speakSlide(slide) {
 }
 
 async function previewVoice() {
-  if (!apiKey) { alert('No API key found. Please set up your OpenRouter key first.'); return; }
+  if (!elevenLabsKey) { alert('Please add your ElevenLabs API key first — tap "Change API Keys" below.'); return; }
   stopAudio();
   setVoiceStatus('🎙️ Loading preview…', '#3d6b4f');
+  const voiceName = document.getElementById('voiceSelect').selectedOptions[0]?.text?.split('—')[0]?.trim() || 'this voice';
   try {
-    const voice = document.getElementById('voiceSelect').value;
-    const url = await fetchTTS(`Hi! I'm ${voice}. I'll be reading your lessons today. Let's start learning!`);
+    const url = await fetchTTS(`Hi! I'm ${voiceName}. I'll be reading your homeschool lessons today. Let's start learning!`);
     const audio = new Audio(url);
     currentAudio = audio;
-    audio.onended = () => { URL.revokeObjectURL(url); currentAudio = null; setVoiceStatus('✅ Preview done — hit Play to start!', '#3d6b4f'); setTimeout(() => setVoiceStatus(''), 3000); };
+    audio.onended = () => { URL.revokeObjectURL(url); currentAudio = null; setVoiceStatus('✅ Sounds good — hit Play to start!', '#3d6b4f'); setTimeout(() => setVoiceStatus(''), 3000); };
     audio.onerror = () => { URL.revokeObjectURL(url); currentAudio = null; setVoiceStatus(''); };
     await audio.play();
   } catch(e) {
@@ -1182,14 +1222,16 @@ function restartLesson() {
 }
 
 window.onload = () => {
-  let saved = '', savedModel = '';
+  let saved = '', savedModel = '', savedElKey = '';
   try {
-    saved = localStorage.getItem('ht4u_apikey') || '';
-    savedModel = localStorage.getItem('ht4u_model') || 'google/gemini-2.0-flash-001';
+    saved       = localStorage.getItem('ht4u_apikey') || '';
+    savedModel  = localStorage.getItem('ht4u_model')  || 'google/gemini-2.0-flash-001';
+    savedElKey  = localStorage.getItem('ht4u_elkey')  || '';
   } catch(e) {}
   if (saved) {
-    apiKey = saved;
-    aiModel = savedModel;
+    apiKey        = saved;
+    aiModel       = savedModel;
+    elevenLabsKey = savedElKey;
     document.getElementById('apiScreen').style.display = 'none';
     document.getElementById('setup').style.display = 'block';
     renderTopics();
